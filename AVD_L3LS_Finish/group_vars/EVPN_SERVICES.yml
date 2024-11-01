@@ -1,26 +1,39 @@
 ---
 tenants:
-  - name: ACME
+  - name: JORGE
     mac_vrf_vni_base: 10000
     vrfs:
-      - name: VRF_A
-        vrf_vni: 10
+      - name: vr-3030
+        vrf_vni: 30
         svis:
-          - id: 10
+          - id: 3030
             # SVI Description
-            name: DMZ
+            name: vlan3030
             enabled: true
-            ip_address_virtual: 10.1.10.1/24
-          - id: 20
-            name: Internal
+            ip_address_virtual: 172.30.30.1/24
+          - id: 2430
+            name: 2430-transit
             enabled: true
-            ip_address_virtual: 10.1.20.1/24
-        l3_interfaces:
-          - interfaces: [Ethernet9]
-            ip_addresses: [10.1.5.1/24]
-            nodes: [leaf4]
-            enabled: True 
-        bgp_peers:
-          - ip_address: 10.1.5.254
-            remote_as: 1
-            nodes: [leaf4]
+            ip_address_virtual: 172.17.5.1/28
+      - name: vr-4040
+        vrf_vni: 40
+        svis:
+          - id: 3040
+            # SVI Description
+            name: vlan3040
+            enabled: true
+            ip_address_virtual: 172.30.40.1/24
+          - id: 2440
+            name: 2440-transit
+            enabled: true
+            ip_address_virtual: 172.17.5.17/28
+
+     #   l3_interfaces:
+     #     - interfaces: [Ethernet47]
+     #       ip_addresses: [172.17.5.1/28]
+     #       nodes: [CAGEA-BORDER-1A]
+     #       enabled: True 
+      #  bgp_peers:
+      #    - ip_address: 172.30.5.13
+      #      remote_as: 1
+      #      nodes: [CAGEA-BORDER-1A]

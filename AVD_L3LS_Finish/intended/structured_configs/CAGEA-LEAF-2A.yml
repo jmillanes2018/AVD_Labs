@@ -1,0 +1,405 @@
+hostname: CAGEA-LEAF-2A
+is_deployed: true
+router_bgp:
+  as: '64515'
+  router_id: 172.17.8.3
+  bgp_defaults:
+  - no bgp default ipv4-unicast
+  - distance bgp 20 200 200
+  - graceful-restart restart-time 300
+  - graceful-restart
+  bgp:
+    default:
+      ipv4_unicast: false
+  maximum_paths:
+    paths: 4
+    ecmp: 4
+  peer_groups:
+  - name: MLAG-IPv4-UNDERLAY-PEER
+    type: ipv4
+    remote_as: '64515'
+    next_hop_self: true
+    description: CAGEA-LEAF-2B
+    maximum_routes: 12000
+    send_community: all
+    route_map_in: RM-MLAG-PEER-IN
+  - name: IPv4-UNDERLAY-PEERS
+    type: ipv4
+    maximum_routes: 12000
+    send_community: all
+  - name: EVPN-OVERLAY-PEERS
+    type: evpn
+    update_source: Loopback0
+    bfd: true
+    send_community: all
+    maximum_routes: 0
+    ebgp_multihop: 3
+  address_family_ipv4:
+    peer_groups:
+    - name: MLAG-IPv4-UNDERLAY-PEER
+      activate: true
+    - name: IPv4-UNDERLAY-PEERS
+      activate: true
+    - name: EVPN-OVERLAY-PEERS
+      activate: false
+  neighbors:
+  - ip_address: 172.17.11.5
+    peer_group: MLAG-IPv4-UNDERLAY-PEER
+    peer: CAGEA-LEAF-2B
+    description: CAGEA-LEAF-2B
+  - ip_address: 172.17.6.8
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '64512'
+    peer: CAGEA-SPINE1
+    description: CAGEA-SPINE1_Ethernet3/1
+  - ip_address: 172.17.6.10
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '64512'
+    peer: CAGEA-SPINE2
+    description: CAGEA-SPINE2_Ethernet3/1
+  - ip_address: 172.17.8.11
+    peer_group: EVPN-OVERLAY-PEERS
+    peer: CAGEA-SPINE1
+    description: CAGEA-SPINE1
+    remote_as: '64512'
+  - ip_address: 172.17.8.12
+    peer_group: EVPN-OVERLAY-PEERS
+    peer: CAGEA-SPINE2
+    description: CAGEA-SPINE2
+    remote_as: '64512'
+  redistribute_routes:
+  - source_protocol: connected
+    route_map: RM-CONN-2-BGP
+  address_family_evpn:
+    peer_groups:
+    - name: EVPN-OVERLAY-PEERS
+      activate: true
+  vrfs:
+  - name: vr-3030
+    router_id: 172.17.8.3
+    rd: 172.17.8.3:30
+    route_targets:
+      import:
+      - address_family: evpn
+        route_targets:
+        - '30:30'
+      export:
+      - address_family: evpn
+        route_targets:
+        - '30:30'
+    redistribute_routes:
+    - source_protocol: connected
+    neighbors:
+    - ip_address: 172.17.11.5
+      peer_group: MLAG-IPv4-UNDERLAY-PEER
+  - name: vr-4040
+    router_id: 172.17.8.3
+    rd: 172.17.8.3:40
+    route_targets:
+      import:
+      - address_family: evpn
+        route_targets:
+        - '40:40'
+      export:
+      - address_family: evpn
+        route_targets:
+        - '40:40'
+    redistribute_routes:
+    - source_protocol: connected
+    neighbors:
+    - ip_address: 172.17.11.5
+      peer_group: MLAG-IPv4-UNDERLAY-PEER
+  vlans:
+  - id: 2430
+    tenant: JORGE
+    rd: 172.17.8.3:12430
+    route_targets:
+      both:
+      - 12430:12430
+    redistribute_routes:
+    - learned
+  - id: 3030
+    tenant: JORGE
+    rd: 172.17.8.3:13030
+    route_targets:
+      both:
+      - 13030:13030
+    redistribute_routes:
+    - learned
+  - id: 2440
+    tenant: JORGE
+    rd: 172.17.8.3:12440
+    route_targets:
+      both:
+      - 12440:12440
+    redistribute_routes:
+    - learned
+  - id: 3040
+    tenant: JORGE
+    rd: 172.17.8.3:13040
+    route_targets:
+      both:
+      - 13040:13040
+    redistribute_routes:
+    - learned
+service_routing_protocols_model: multi-agent
+ip_routing: true
+daemon_terminattr:
+  cvaddrs:
+  - 198.18.0.1:9910
+  cvauth:
+    method: token
+    token_file: /tmp/token
+  cvvrf: MGMT
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  disable_aaa: true
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 1006
+    ending: 1199
+spanning_tree:
+  mode: mstp
+  mst_instances:
+  - id: '0'
+    priority: 16384
+  no_spanning_tree_vlan: 4093-4094
+vrfs:
+- name: MGMT
+  ip_routing: false
+- name: vr-3030
+  tenant: JORGE
+  ip_routing: true
+- name: vr-4040
+  tenant: JORGE
+  ip_routing: true
+management_interfaces:
+- name: Management1
+  description: oob_management
+  shutdown: false
+  vrf: MGMT
+  ip_address: 198.18.0.6/24
+  gateway: null
+  type: oob
+management_api_http:
+  enable_vrfs:
+  - name: MGMT
+  enable_https: true
+vlans:
+- id: 4093
+  tenant: system
+  name: LEAF_PEER_L3
+  trunk_groups:
+  - LEAF_PEER_L3
+- id: 4094
+  tenant: system
+  name: MLAG_PEER
+  trunk_groups:
+  - MLAG
+- id: 2430
+  name: 2430-transit
+  tenant: JORGE
+- id: 3030
+  name: vlan3030
+  tenant: JORGE
+- id: 3029
+  name: MLAG_iBGP_vr-3030
+  trunk_groups:
+  - LEAF_PEER_L3
+  tenant: JORGE
+- id: 2440
+  name: 2440-transit
+  tenant: JORGE
+- id: 3040
+  name: vlan3040
+  tenant: JORGE
+- id: 3039
+  name: MLAG_iBGP_vr-4040
+  trunk_groups:
+  - LEAF_PEER_L3
+  tenant: JORGE
+vlan_interfaces:
+- name: Vlan4093
+  description: MLAG_PEER_L3_PEERING
+  shutdown: false
+  mtu: 1500
+  ip_address: 172.17.11.4/31
+- name: Vlan4094
+  description: MLAG_PEER
+  shutdown: false
+  no_autostate: true
+  mtu: 1500
+  ip_address: 172.17.10.4/31
+- name: Vlan2430
+  tenant: JORGE
+  description: 2430-transit
+  shutdown: false
+  ip_address_virtual: 172.17.5.1/28
+  vrf: vr-3030
+- name: Vlan3030
+  tenant: JORGE
+  description: vlan3030
+  shutdown: false
+  ip_address_virtual: 172.30.30.1/24
+  vrf: vr-3030
+- name: Vlan3029
+  tenant: JORGE
+  type: underlay_peering
+  shutdown: false
+  description: 'MLAG_PEER_L3_iBGP: vrf vr-3030'
+  vrf: vr-3030
+  mtu: 1500
+  ip_address: 172.17.11.4/31
+- name: Vlan2440
+  tenant: JORGE
+  description: 2440-transit
+  shutdown: false
+  ip_address_virtual: 172.17.5.17/28
+  vrf: vr-4040
+- name: Vlan3040
+  tenant: JORGE
+  description: vlan3040
+  shutdown: false
+  ip_address_virtual: 172.30.40.1/24
+  vrf: vr-4040
+- name: Vlan3039
+  tenant: JORGE
+  type: underlay_peering
+  shutdown: false
+  description: 'MLAG_PEER_L3_iBGP: vrf vr-4040'
+  vrf: vr-4040
+  mtu: 1500
+  ip_address: 172.17.11.4/31
+port_channel_interfaces:
+- name: Port-Channel551
+  description: MLAG_PEER_CAGEA-LEAF-2B_Po551
+  type: switched
+  shutdown: false
+  mode: trunk
+  trunk_groups:
+  - LEAF_PEER_L3
+  - MLAG
+- name: Port-Channel1
+  description: TP2_PortChannel host3
+  type: switched
+  shutdown: false
+  mode: trunk
+  vlans: '3030'
+  spanning_tree_portfast: edge
+  mlag: 1
+ethernet_interfaces:
+- name: Ethernet55/1
+  peer: CAGEA-LEAF-2B
+  peer_interface: Ethernet55/1
+  peer_type: mlag_peer
+  description: MLAG_PEER_CAGEA-LEAF-2B_Ethernet55/1
+  type: port-channel-member
+  shutdown: false
+  channel_group:
+    id: 551
+    mode: active
+- name: Ethernet56/1
+  peer: CAGEA-LEAF-2B
+  peer_interface: Ethernet56/1
+  peer_type: mlag_peer
+  description: MLAG_PEER_CAGEA-LEAF-2B_Ethernet56/1
+  type: port-channel-member
+  shutdown: false
+  channel_group:
+    id: 551
+    mode: active
+- name: Ethernet49/1
+  peer: CAGEA-SPINE1
+  peer_interface: Ethernet3/1
+  peer_type: spine
+  description: P2P_LINK_TO_CAGEA-SPINE1_Ethernet3/1
+  shutdown: false
+  mtu: 1500
+  type: routed
+  ip_address: 172.17.6.9/31
+- name: Ethernet50/1
+  peer: CAGEA-SPINE2
+  peer_interface: Ethernet3/1
+  peer_type: spine
+  description: P2P_LINK_TO_CAGEA-SPINE2_Ethernet3/1
+  shutdown: false
+  mtu: 1500
+  type: routed
+  ip_address: 172.17.6.11/31
+- name: Ethernet1
+  peer: TP2
+  peer_interface: Ethernet1
+  peer_type: server
+  description: TP2_Ethernet1
+  shutdown: false
+  type: port-channel-member
+  channel_group:
+    id: 1
+    mode: active
+mlag_configuration:
+  domain_id: mlag2
+  local_interface: Vlan4094
+  peer_address: 172.17.10.5
+  peer_link: Port-Channel551
+  reload_delay_mlag: '300'
+  reload_delay_non_mlag: '330'
+route_maps:
+- name: RM-MLAG-PEER-IN
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    set:
+    - origin incomplete
+    description: Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
+- name: RM-CONN-2-BGP
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    match:
+    - ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+loopback_interfaces:
+- name: Loopback0
+  description: EVPN_Overlay_Peering
+  shutdown: false
+  ip_address: 172.17.8.3/32
+- name: Loopback1
+  description: VTEP_VXLAN_Tunnel_Source
+  shutdown: false
+  ip_address: 172.17.9.3/32
+prefix_lists:
+- name: PL-LOOPBACKS-EVPN-OVERLAY
+  sequence_numbers:
+  - sequence: 10
+    action: permit 172.17.8.0/24 eq 32
+  - sequence: 20
+    action: permit 172.17.9.0/24 eq 32
+router_bfd:
+  multihop:
+    interval: 1200
+    min_rx: 1200
+    multiplier: 3
+ip_igmp_snooping:
+  globally_enabled: true
+ip_virtual_router_mac_address: 00:1c:73:00:00:99
+vxlan_interface:
+  Vxlan1:
+    description: CAGEA-LEAF-2A_VTEP
+    vxlan:
+      udp_port: 4789
+      source_interface: Loopback1
+      virtual_router_encapsulation_mac_address: mlag-system-id
+      vlans:
+      - id: 2430
+        vni: 12430
+      - id: 3030
+        vni: 13030
+      - id: 2440
+        vni: 12440
+      - id: 3040
+        vni: 13040
+      vrfs:
+      - name: vr-3030
+        vni: 30
+      - name: vr-4040
+        vni: 40

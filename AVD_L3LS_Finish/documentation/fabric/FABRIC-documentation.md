@@ -17,14 +17,14 @@
 
 | POD | Type | Node | Management IP | Platform | Provisioned in CloudVision | Serial Number |
 | --- | ---- | ---- | ------------- | -------- | -------------------------- | ------------- |
-| FABRIC | l3leaf | leaf1 | 192.168.0.21/24 | - | Provisioned | - |
-| FABRIC | l3leaf | leaf2 | 192.168.0.22/24 | - | Provisioned | - |
-| FABRIC | l3leaf | leaf3 | 192.168.0.23/24 | - | Provisioned | - |
-| FABRIC | l3leaf | leaf4 | 192.168.0.24/24 | - | Provisioned | - |
-| FABRIC | spine | spine1 | 192.168.0.11/24 | - | Provisioned | - |
-| FABRIC | spine | spine2 | 192.168.0.12/24 | - | Provisioned | - |
-| FABRIC | spine | spine3 | 192.168.0.13/24 | - | Provisioned | - |
-| FABRIC | spine | spine4 | 192.168.0.14/24 | - | Provisioned | - |
+| FABRIC | l3leaf | CAGEA-BORDER-1A | 198.18.0.8/24 | - | Provisioned | - |
+| FABRIC | l3leaf | CAGEA-BORDER-1B | 198.18.0.9/24 | - | Provisioned | - |
+| FABRIC | l3leaf | CAGEA-LEAF-1A | 198.18.0.4/24 | - | Provisioned | - |
+| FABRIC | l3leaf | CAGEA-LEAF-1B | 198.18.0.5/24 | - | Provisioned | - |
+| FABRIC | l3leaf | CAGEA-LEAF-2A | 198.18.0.6/24 | - | Provisioned | - |
+| FABRIC | l3leaf | CAGEA-LEAF-2B | 198.18.0.7/24 | - | Provisioned | - |
+| FABRIC | spine | CAGEA-SPINE1 | 198.18.0.2/24 | - | Provisioned | - |
+| FABRIC | spine | CAGEA-SPINE2 | 198.18.0.3/24 | - | Provisioned | - |
 
 > Provision status is based on Ansible inventory declaration and do not represent real status from CloudVision.
 
@@ -37,26 +37,24 @@
 
 | Type | Node | Node Interface | Peer Type | Peer Node | Peer Interface |
 | ---- | ---- | -------------- | --------- | ----------| -------------- |
-| l3leaf | leaf1 | Ethernet1 | mlag_peer | leaf2 | Ethernet1 |
-| l3leaf | leaf1 | Ethernet2 | mlag_peer | leaf2 | Ethernet2 |
-| l3leaf | leaf1 | Ethernet3 | spine | spine1 | Ethernet3 |
-| l3leaf | leaf1 | Ethernet4 | spine | spine2 | Ethernet3 |
-| l3leaf | leaf1 | Ethernet5 | spine | spine3 | Ethernet3 |
-| l3leaf | leaf1 | Ethernet6 | spine | spine4 | Ethernet3 |
-| l3leaf | leaf2 | Ethernet3 | spine | spine1 | Ethernet4 |
-| l3leaf | leaf2 | Ethernet4 | spine | spine2 | Ethernet4 |
-| l3leaf | leaf2 | Ethernet5 | spine | spine3 | Ethernet4 |
-| l3leaf | leaf2 | Ethernet6 | spine | spine4 | Ethernet4 |
-| l3leaf | leaf3 | Ethernet1 | mlag_peer | leaf4 | Ethernet1 |
-| l3leaf | leaf3 | Ethernet2 | mlag_peer | leaf4 | Ethernet2 |
-| l3leaf | leaf3 | Ethernet3 | spine | spine1 | Ethernet5 |
-| l3leaf | leaf3 | Ethernet4 | spine | spine2 | Ethernet5 |
-| l3leaf | leaf3 | Ethernet5 | spine | spine3 | Ethernet5 |
-| l3leaf | leaf3 | Ethernet6 | spine | spine4 | Ethernet5 |
-| l3leaf | leaf4 | Ethernet3 | spine | spine1 | Ethernet6 |
-| l3leaf | leaf4 | Ethernet4 | spine | spine2 | Ethernet6 |
-| l3leaf | leaf4 | Ethernet5 | spine | spine3 | Ethernet6 |
-| l3leaf | leaf4 | Ethernet6 | spine | spine4 | Ethernet6 |
+| l3leaf | CAGEA-BORDER-1A | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet51/1 |
+| l3leaf | CAGEA-BORDER-1A | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet51/1 |
+| l3leaf | CAGEA-BORDER-1A | Ethernet55/1 | mlag_peer | CAGEA-BORDER-1B | Ethernet55/1 |
+| l3leaf | CAGEA-BORDER-1A | Ethernet56/1 | mlag_peer | CAGEA-BORDER-1B | Ethernet56/1 |
+| l3leaf | CAGEA-BORDER-1B | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet52/1 |
+| l3leaf | CAGEA-BORDER-1B | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet52/1 |
+| l3leaf | CAGEA-LEAF-1A | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet1/1 |
+| l3leaf | CAGEA-LEAF-1A | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet1/1 |
+| l3leaf | CAGEA-LEAF-1A | Ethernet55/1 | mlag_peer | CAGEA-LEAF-1B | Ethernet55/1 |
+| l3leaf | CAGEA-LEAF-1A | Ethernet56/1 | mlag_peer | CAGEA-LEAF-1B | Ethernet56/1 |
+| l3leaf | CAGEA-LEAF-1B | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet2/1 |
+| l3leaf | CAGEA-LEAF-1B | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet2/1 |
+| l3leaf | CAGEA-LEAF-2A | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet3/1 |
+| l3leaf | CAGEA-LEAF-2A | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet3/1 |
+| l3leaf | CAGEA-LEAF-2A | Ethernet55/1 | mlag_peer | CAGEA-LEAF-2B | Ethernet55/1 |
+| l3leaf | CAGEA-LEAF-2A | Ethernet56/1 | mlag_peer | CAGEA-LEAF-2B | Ethernet56/1 |
+| l3leaf | CAGEA-LEAF-2B | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet4/1 |
+| l3leaf | CAGEA-LEAF-2B | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet4/1 |
 
 ## Fabric IP Allocation
 
@@ -64,59 +62,57 @@
 
 | Uplink IPv4 Pool | Available Addresses | Assigned addresses | Assigned Address % |
 | ---------------- | ------------------- | ------------------ | ------------------ |
-| 192.168.103.0/24 | 256 | 32 | 12.5 % |
+| 172.17.6.0/24 | 256 | 24 | 9.38 % |
 
 ### Point-To-Point Links Node Allocation
 
 | Node | Node Interface | Node IP Address | Peer Node | Peer Interface | Peer IP Address |
 | ---- | -------------- | --------------- | --------- | -------------- | --------------- |
-| leaf1 | Ethernet3 | 192.168.103.1/31 | spine1 | Ethernet3 | 192.168.103.0/31 |
-| leaf1 | Ethernet4 | 192.168.103.3/31 | spine2 | Ethernet3 | 192.168.103.2/31 |
-| leaf1 | Ethernet5 | 192.168.103.5/31 | spine3 | Ethernet3 | 192.168.103.4/31 |
-| leaf1 | Ethernet6 | 192.168.103.7/31 | spine4 | Ethernet3 | 192.168.103.6/31 |
-| leaf2 | Ethernet3 | 192.168.103.9/31 | spine1 | Ethernet4 | 192.168.103.8/31 |
-| leaf2 | Ethernet4 | 192.168.103.11/31 | spine2 | Ethernet4 | 192.168.103.10/31 |
-| leaf2 | Ethernet5 | 192.168.103.13/31 | spine3 | Ethernet4 | 192.168.103.12/31 |
-| leaf2 | Ethernet6 | 192.168.103.15/31 | spine4 | Ethernet4 | 192.168.103.14/31 |
-| leaf3 | Ethernet3 | 192.168.103.17/31 | spine1 | Ethernet5 | 192.168.103.16/31 |
-| leaf3 | Ethernet4 | 192.168.103.19/31 | spine2 | Ethernet5 | 192.168.103.18/31 |
-| leaf3 | Ethernet5 | 192.168.103.21/31 | spine3 | Ethernet5 | 192.168.103.20/31 |
-| leaf3 | Ethernet6 | 192.168.103.23/31 | spine4 | Ethernet5 | 192.168.103.22/31 |
-| leaf4 | Ethernet3 | 192.168.103.25/31 | spine1 | Ethernet6 | 192.168.103.24/31 |
-| leaf4 | Ethernet4 | 192.168.103.27/31 | spine2 | Ethernet6 | 192.168.103.26/31 |
-| leaf4 | Ethernet5 | 192.168.103.29/31 | spine3 | Ethernet6 | 192.168.103.28/31 |
-| leaf4 | Ethernet6 | 192.168.103.31/31 | spine4 | Ethernet6 | 192.168.103.30/31 |
+| CAGEA-BORDER-1A | Ethernet49/1 | 172.17.6.17/31 | CAGEA-SPINE1 | Ethernet51/1 | 172.17.6.16/31 |
+| CAGEA-BORDER-1A | Ethernet50/1 | 172.17.6.19/31 | CAGEA-SPINE2 | Ethernet51/1 | 172.17.6.18/31 |
+| CAGEA-BORDER-1B | Ethernet49/1 | 172.17.6.21/31 | CAGEA-SPINE1 | Ethernet52/1 | 172.17.6.20/31 |
+| CAGEA-BORDER-1B | Ethernet50/1 | 172.17.6.23/31 | CAGEA-SPINE2 | Ethernet52/1 | 172.17.6.22/31 |
+| CAGEA-LEAF-1A | Ethernet49/1 | 172.17.6.1/31 | CAGEA-SPINE1 | Ethernet1/1 | 172.17.6.0/31 |
+| CAGEA-LEAF-1A | Ethernet50/1 | 172.17.6.3/31 | CAGEA-SPINE2 | Ethernet1/1 | 172.17.6.2/31 |
+| CAGEA-LEAF-1B | Ethernet49/1 | 172.17.6.5/31 | CAGEA-SPINE1 | Ethernet2/1 | 172.17.6.4/31 |
+| CAGEA-LEAF-1B | Ethernet50/1 | 172.17.6.7/31 | CAGEA-SPINE2 | Ethernet2/1 | 172.17.6.6/31 |
+| CAGEA-LEAF-2A | Ethernet49/1 | 172.17.6.9/31 | CAGEA-SPINE1 | Ethernet3/1 | 172.17.6.8/31 |
+| CAGEA-LEAF-2A | Ethernet50/1 | 172.17.6.11/31 | CAGEA-SPINE2 | Ethernet3/1 | 172.17.6.10/31 |
+| CAGEA-LEAF-2B | Ethernet49/1 | 172.17.6.13/31 | CAGEA-SPINE1 | Ethernet4/1 | 172.17.6.12/31 |
+| CAGEA-LEAF-2B | Ethernet50/1 | 172.17.6.15/31 | CAGEA-SPINE2 | Ethernet4/1 | 172.17.6.14/31 |
 
 ### Loopback Interfaces (BGP EVPN Peering)
 
 | Loopback Pool | Available Addresses | Assigned addresses | Assigned Address % |
 | ------------- | ------------------- | ------------------ | ------------------ |
-| 192.168.101.0/24 | 256 | 8 | 3.13 % |
+| 172.17.8.0/24 | 256 | 8 | 3.13 % |
 
 ### Loopback0 Interfaces Node Allocation
 
 | POD | Node | Loopback0 |
 | --- | ---- | --------- |
-| FABRIC | leaf1 | 192.168.101.1/32 |
-| FABRIC | leaf2 | 192.168.101.2/32 |
-| FABRIC | leaf3 | 192.168.101.3/32 |
-| FABRIC | leaf4 | 192.168.101.4/32 |
-| FABRIC | spine1 | 192.168.101.11/32 |
-| FABRIC | spine2 | 192.168.101.12/32 |
-| FABRIC | spine3 | 192.168.101.13/32 |
-| FABRIC | spine4 | 192.168.101.14/32 |
+| FABRIC | CAGEA-BORDER-1A | 172.17.8.5/32 |
+| FABRIC | CAGEA-BORDER-1B | 172.17.8.6/32 |
+| FABRIC | CAGEA-LEAF-1A | 172.17.8.1/32 |
+| FABRIC | CAGEA-LEAF-1B | 172.17.8.2/32 |
+| FABRIC | CAGEA-LEAF-2A | 172.17.8.3/32 |
+| FABRIC | CAGEA-LEAF-2B | 172.17.8.4/32 |
+| FABRIC | CAGEA-SPINE1 | 172.17.8.11/32 |
+| FABRIC | CAGEA-SPINE2 | 172.17.8.12/32 |
 
 ### VTEP Loopback VXLAN Tunnel Source Interfaces (VTEPs Only)
 
 | VTEP Loopback Pool | Available Addresses | Assigned addresses | Assigned Address % |
 | --------------------- | ------------------- | ------------------ | ------------------ |
-| 192.168.102.0/24 | 256 | 4 | 1.57 % |
+| 172.17.9.0/24 | 256 | 6 | 2.35 % |
 
 ### VTEP Loopback Node allocation
 
 | POD | Node | Loopback1 |
 | --- | ---- | --------- |
-| FABRIC | leaf1 | 192.168.102.1/32 |
-| FABRIC | leaf2 | 192.168.102.1/32 |
-| FABRIC | leaf3 | 192.168.102.3/32 |
-| FABRIC | leaf4 | 192.168.102.3/32 |
+| FABRIC | CAGEA-BORDER-1A | 172.17.9.5/32 |
+| FABRIC | CAGEA-BORDER-1B | 172.17.9.5/32 |
+| FABRIC | CAGEA-LEAF-1A | 172.17.9.1/32 |
+| FABRIC | CAGEA-LEAF-1B | 172.17.9.1/32 |
+| FABRIC | CAGEA-LEAF-2A | 172.17.9.3/32 |
+| FABRIC | CAGEA-LEAF-2B | 172.17.9.3/32 |

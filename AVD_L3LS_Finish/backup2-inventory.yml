@@ -4,8 +4,8 @@ all:
     CVP_cluster:
       hosts: 
         cvp1: 
-          ansible_httpapi_host: 198.18.0.1
-          ansible_host: 198.18.0.1
+          ansible_httpapi_host: 10.18.172.71
+          ansible_host: 10.18.172.71
           ansible_user: cvpadmin
           ansible_password: cvp123!
           ansible_connection: httpapi
@@ -34,25 +34,25 @@ all:
             type: spine
           hosts:
             CAGEA-SPINE1:
-              ansible_host: 198.18.0.2
+              ansible_host: 10.18.172.44
             CAGEA-SPINE2:
-              ansible_host: 198.18.0.3    
+              ansible_host: 10.18.172.67            
         LEAFS:
           vars: 
             type: l3leaf
           hosts:
             CAGEA-LEAF-1A:
-              ansible_host: 198.18.0.4
+              ansible_host: 10.18.172.43
             CAGEA-LEAF-1B:
-              ansible_host: 198.18.0.5
+              ansible_host: 10.18.172.48
             CAGEA-LEAF-2A:
-              ansible_host: 198.18.0.6
+              ansible_host: 10.18.172.46
             CAGEA-LEAF-2B:
-              ansible_host: 198.18.0.7
+              ansible_host: 10.18.172.52
             CAGEA-BORDER-1A:
-              ansible_host: 198.18.0.8
+              ansible_host: 10.18.172.65
             CAGEA-BORDER-1B:
-              ansible_host: 198.18.0.9            
+              ansible_host: 10.18.172.43            
     EVPN_SERVICES:
       children:
         LEAFS:
