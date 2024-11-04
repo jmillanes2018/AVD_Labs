@@ -5,17 +5,22 @@ cvp_configlets:
     -taillogs\n   no shutdown\n!\nvlan internal order ascending range 1006 1199\n!\ntransceiver
     qsfp default-mode 4x10G\n!\nservice routing protocols model multi-agent\n!\nhostname
     CAGEA-BORDER-1A\n!\nspanning-tree mode mstp\nno spanning-tree vlan-id 4093-4094\nspanning-tree
-    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nvlan 2430\n   name
-    2430-transit\n!\nvlan 2440\n   name 2440-transit\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
+    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nusername cvpadmin
+    privilege 15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvlan
+    55\n   name VLAN55\n!\nvlan 56\n   name VLAN56\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
     \  trunk group LEAF_PEER_L3\n!\nvlan 3030\n   name vlan3030\n!\nvlan 3039\n   name
     MLAG_iBGP_vr-4040\n   trunk group LEAF_PEER_L3\n!\nvlan 3040\n   name vlan3040\n!\nvlan
     4093\n   name LEAF_PEER_L3\n   trunk group LEAF_PEER_L3\n!\nvlan 4094\n   name
     MLAG_PEER\n   trunk group MLAG\n!\nvrf instance MGMT\n!\nvrf instance vr-3030\n!\nvrf
-    instance vr-4040\n!\ninterface Port-Channel551\n   description MLAG_PEER_CAGEA-BORDER-1B_Po551\n
-    \  no shutdown\n   switchport\n   switchport mode trunk\n   switchport trunk group
-    LEAF_PEER_L3\n   switchport trunk group MLAG\n!\ninterface Ethernet49/1\n   description
+    instance vr-4040\n!\ninterface Port-Channel47\n   description Firewall_PortChannel
+    firewall\n   no shutdown\n   switchport\n   switchport trunk allowed vlan 3030,
+    3040, 55\n   switchport mode trunk\n   mlag 47\n   spanning-tree portfast\n!\ninterface
+    Port-Channel551\n   description MLAG_PEER_CAGEA-BORDER-1B_Po551\n   no shutdown\n
+    \  switchport\n   switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n
+    \  switchport trunk group MLAG\n!\ninterface Ethernet47\n   description Firewall_Ethernet1\n
+    \  no shutdown\n   channel-group 47 mode active\n!\ninterface Ethernet51/1\n   description
     P2P_LINK_TO_CAGEA-SPINE1_Ethernet51/1\n   no shutdown\n   mtu 1500\n   no switchport\n
-    \  ip address 172.17.6.17/31\n!\ninterface Ethernet50/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet51/1\n
+    \  ip address 172.17.6.17/31\n!\ninterface Ethernet52/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet51/1\n
     \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.19/31\n!\ninterface
     Ethernet55/1\n   description MLAG_PEER_CAGEA-BORDER-1B_Ethernet55/1\n   no shutdown\n
     \  channel-group 551 mode active\n!\ninterface Ethernet56/1\n   description MLAG_PEER_CAGEA-BORDER-1B_Ethernet56/1\n
@@ -23,34 +28,35 @@ cvp_configlets:
     EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.5/32\n!\ninterface
     Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address
     172.17.9.5/32\n!\ninterface Management1\n   description oob_management\n   no
-    shutdown\n   vrf MGMT\n   ip address 198.18.0.8/24\n!\ninterface Vlan2430\n   description
-    2430-transit\n   no shutdown\n   vrf vr-3030\n   ip address virtual 172.17.5.1/28\n!\ninterface
-    Vlan2440\n   description 2440-transit\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.17.5.17/28\n!\ninterface Vlan3029\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n   ip address 172.17.11.8/31\n!\ninterface
-    Vlan3030\n   description vlan3030\n   no shutdown\n   vrf vr-3030\n   ip address
-    virtual 172.30.30.1/24\n!\ninterface Vlan3039\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-4040\n   no shutdown\n   mtu 1500\n   vrf vr-4040\n   ip address 172.17.11.8/31\n!\ninterface
-    Vlan3040\n   description vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.30.40.1/24\n!\ninterface Vlan4093\n   description MLAG_PEER_L3_PEERING\n
-    \  no shutdown\n   mtu 1500\n   ip address 172.17.11.8/31\n!\ninterface Vlan4094\n
-    \  description MLAG_PEER\n   no shutdown\n   mtu 1500\n   no autostate\n   ip
-    address 172.17.10.8/31\n!\ninterface Vxlan1\n   description CAGEA-BORDER-1A_VTEP\n
-    \  vxlan source-interface Loopback1\n   vxlan virtual-router encapsulation mac-address
-    mlag-system-id\n   vxlan udp-port 4789\n   vxlan vlan 2430 vni 12430\n   vxlan
-    vlan 2440 vni 12440\n   vxlan vlan 3030 vni 13030\n   vxlan vlan 3040 vni 13040\n
-    \  vxlan vrf vr-3030 vni 30\n   vxlan vrf vr-4040 vni 40\n!\nip virtual-router
-    mac-address 00:1c:73:00:00:99\n!\nip routing\nno ip routing vrf MGMT\nip routing
-    vrf vr-3030\nip routing vrf vr-4040\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n
-    \  seq 10 permit 172.17.8.0/24 eq 32\n   seq 20 permit 172.17.9.0/24 eq 32\n!\nmlag
-    configuration\n   domain-id mlag3\n   local-interface Vlan4094\n   peer-address
-    172.17.10.9\n   peer-link Port-Channel551\n   reload-delay mlag 300\n   reload-delay
-    non-mlag 330\n!\nroute-map RM-CONN-2-BGP permit 10\n   match ip address prefix-list
-    PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description
-    Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal
-    routing\n   set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx
-    1200 multiplier 3\n!\nrouter bgp 64517\n   router-id 172.17.8.5\n   maximum-paths
-    4 ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
+    shutdown\n   vrf MGMT\n   ip address 198.18.0.8/24\n!\ninterface Vlan3029\n   description
+    MLAG_PEER_L3_iBGP: vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n
+    \  ip address 172.17.11.8/31\n!\ninterface Vlan3030\n   description vlan3030\n
+    \  no shutdown\n   vrf vr-3030\n   ip address virtual 172.30.30.1/24\n!\ninterface
+    Vlan3039\n   description MLAG_PEER_L3_iBGP: vrf vr-4040\n   no shutdown\n   mtu
+    1500\n   vrf vr-4040\n   ip address 172.17.11.8/31\n!\ninterface Vlan3040\n   description
+    vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address virtual 172.30.40.1/24\n!\ninterface
+    Vlan4093\n   description MLAG_PEER_L3_PEERING\n   no shutdown\n   mtu 1500\n   ip
+    address 172.17.11.8/31\n!\ninterface Vlan4094\n   description MLAG_PEER\n   no
+    shutdown\n   mtu 1500\n   no autostate\n   ip address 172.17.10.8/31\n!\ninterface
+    Vxlan1\n   description CAGEA-BORDER-1A_VTEP\n   vxlan source-interface Loopback1\n
+    \  vxlan virtual-router encapsulation mac-address mlag-system-id\n   vxlan udp-port
+    4789\n   vxlan vlan 55 vni 10055\n   vxlan vlan 56 vni 10056\n   vxlan vlan 3030
+    vni 13030\n   vxlan vlan 3040 vni 13040\n   vxlan vrf vr-3030 vni 30\n   vxlan
+    vrf vr-4040 vni 40\n!\nip virtual-router mac-address 00:1c:73:00:00:99\n!\nip
+    routing\nno ip routing vrf MGMT\nip routing vrf vr-3030\nip routing vrf vr-4040\n!\nip
+    prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit 172.17.8.0/24 eq 32\n
+    \  seq 20 permit 172.17.9.0/24 eq 32\n!\nip prefix-list PL-MLAG-PEER-VRFS\n   seq
+    10 permit 172.17.11.8/31\n!\nmlag configuration\n   domain-id mlag3\n   local-interface
+    Vlan4094\n   peer-address 172.17.10.9\n   peer-link Port-Channel551\n   reload-delay
+    mlag 300\n   reload-delay non-mlag 330\n!\nip route vrf vr-3030 0.0.0.0/0 172.30.30.254\nip
+    route vrf vr-4040 0.0.0.0/0 172.30.40.254\n!\nroute-map RM-CONN-2-BGP permit 10\n
+    \  match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-CONN-2-BGP-VRFS
+    deny 10\n   match ip address prefix-list PL-MLAG-PEER-VRFS\n!\nroute-map RM-CONN-2-BGP-VRFS
+    permit 20\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description Make routes
+    learned over MLAG Peer-link less preferred on spines to ensure optimal routing\n
+    \  set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx 1200
+    multiplier 3\n!\nrouter bgp 64517\n   router-id 172.17.8.5\n   maximum-paths 4
+    ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
     bgp 20 200 200\n   graceful-restart restart-time 300\n   graceful-restart\n   neighbor
     EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
     \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop
@@ -70,22 +76,23 @@ cvp_configlets:
     172.17.8.12 peer group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.12 remote-as 64512\n
     \  neighbor 172.17.8.12 description CAGEA-SPINE2\n   neighbor 172.17.11.9 peer
     group MLAG-IPv4-UNDERLAY-PEER\n   neighbor 172.17.11.9 description CAGEA-BORDER-1B\n
-    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 2430\n      rd
-    172.17.8.5:12430\n      route-target both 12430:12430\n      redistribute learned\n
-    \  !\n   vlan 2440\n      rd 172.17.8.5:12440\n      route-target both 12440:12440\n
-    \     redistribute learned\n   !\n   vlan 3030\n      rd 172.17.8.5:13030\n      route-target
-    both 13030:13030\n      redistribute learned\n   !\n   vlan 3040\n      rd 172.17.8.5:13040\n
-    \     route-target both 13040:13040\n      redistribute learned\n   !\n   address-family
+    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 3030\n      rd
+    172.17.8.5:13030\n      route-target both 13030:13030\n      redistribute learned\n
+    \  !\n   vlan 3040\n      rd 172.17.8.5:13040\n      route-target both 13040:13040\n
+    \     redistribute learned\n   !\n   vlan 55\n      rd 172.17.8.5:10055\n      route-target
+    both 10055:10055\n      redistribute learned\n   !\n   vlan 56\n      rd 172.17.8.5:10056\n
+    \     route-target both 10056:10056\n      redistribute learned\n   !\n   address-family
     evpn\n      neighbor EVPN-OVERLAY-PEERS activate\n   !\n   address-family ipv4\n
     \     no neighbor EVPN-OVERLAY-PEERS activate\n      neighbor IPv4-UNDERLAY-PEERS
     activate\n      neighbor MLAG-IPv4-UNDERLAY-PEER activate\n   !\n   vrf vr-3030\n
     \     rd 172.17.8.5:30\n      route-target import evpn 30:30\n      route-target
     export evpn 30:30\n      router-id 172.17.8.5\n      neighbor 172.17.11.9 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n   !\n   vrf vr-4040\n
-    \     rd 172.17.8.5:40\n      route-target import evpn 40:40\n      route-target
-    export evpn 40:40\n      router-id 172.17.8.5\n      neighbor 172.17.11.9 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n!\nmanagement api
-    http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
+    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected route-map RM-CONN-2-BGP-VRFS\n
+    \     redistribute static\n   !\n   vrf vr-4040\n      rd 172.17.8.5:40\n      route-target
+    import evpn 40:40\n      route-target export evpn 40:40\n      router-id 172.17.8.5\n
+    \     neighbor 172.17.11.9 peer group MLAG-IPv4-UNDERLAY-PEER\n      redistribute
+    connected route-map RM-CONN-2-BGP-VRFS\n      redistribute static\n!\nmanagement
+    api http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
     shutdown\n!\nend\n"
   AVD_CAGEA-BORDER-1B: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n   exec
     /usr/bin/TerminAttr -cvaddr=198.18.0.1:9910 -cvauth=token,/tmp/token -cvvrf=MGMT
@@ -93,17 +100,22 @@ cvp_configlets:
     -taillogs\n   no shutdown\n!\nvlan internal order ascending range 1006 1199\n!\ntransceiver
     qsfp default-mode 4x10G\n!\nservice routing protocols model multi-agent\n!\nhostname
     CAGEA-BORDER-1B\n!\nspanning-tree mode mstp\nno spanning-tree vlan-id 4093-4094\nspanning-tree
-    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nvlan 2430\n   name
-    2430-transit\n!\nvlan 2440\n   name 2440-transit\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
+    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nusername cvpadmin
+    privilege 15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvlan
+    55\n   name VLAN55\n!\nvlan 56\n   name VLAN56\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
     \  trunk group LEAF_PEER_L3\n!\nvlan 3030\n   name vlan3030\n!\nvlan 3039\n   name
     MLAG_iBGP_vr-4040\n   trunk group LEAF_PEER_L3\n!\nvlan 3040\n   name vlan3040\n!\nvlan
     4093\n   name LEAF_PEER_L3\n   trunk group LEAF_PEER_L3\n!\nvlan 4094\n   name
     MLAG_PEER\n   trunk group MLAG\n!\nvrf instance MGMT\n!\nvrf instance vr-3030\n!\nvrf
-    instance vr-4040\n!\ninterface Port-Channel551\n   description MLAG_PEER_CAGEA-BORDER-1A_Po551\n
-    \  no shutdown\n   switchport\n   switchport mode trunk\n   switchport trunk group
-    LEAF_PEER_L3\n   switchport trunk group MLAG\n!\ninterface Ethernet49/1\n   description
+    instance vr-4040\n!\ninterface Port-Channel47\n   description Firewall_PortChannel
+    firewall\n   no shutdown\n   switchport\n   switchport trunk allowed vlan 3030,
+    3040, 55\n   switchport mode trunk\n   mlag 47\n   spanning-tree portfast\n!\ninterface
+    Port-Channel551\n   description MLAG_PEER_CAGEA-BORDER-1A_Po551\n   no shutdown\n
+    \  switchport\n   switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n
+    \  switchport trunk group MLAG\n!\ninterface Ethernet47\n   description Firewall_Ethernet2\n
+    \  no shutdown\n   channel-group 47 mode active\n!\ninterface Ethernet51/1\n   description
     P2P_LINK_TO_CAGEA-SPINE1_Ethernet52/1\n   no shutdown\n   mtu 1500\n   no switchport\n
-    \  ip address 172.17.6.21/31\n!\ninterface Ethernet50/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet52/1\n
+    \  ip address 172.17.6.21/31\n!\ninterface Ethernet52/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet52/1\n
     \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.23/31\n!\ninterface
     Ethernet55/1\n   description MLAG_PEER_CAGEA-BORDER-1A_Ethernet55/1\n   no shutdown\n
     \  channel-group 551 mode active\n!\ninterface Ethernet56/1\n   description MLAG_PEER_CAGEA-BORDER-1A_Ethernet56/1\n
@@ -111,34 +123,35 @@ cvp_configlets:
     EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.6/32\n!\ninterface
     Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address
     172.17.9.5/32\n!\ninterface Management1\n   description oob_management\n   no
-    shutdown\n   vrf MGMT\n   ip address 198.18.0.9/24\n!\ninterface Vlan2430\n   description
-    2430-transit\n   no shutdown\n   vrf vr-3030\n   ip address virtual 172.17.5.1/28\n!\ninterface
-    Vlan2440\n   description 2440-transit\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.17.5.17/28\n!\ninterface Vlan3029\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n   ip address 172.17.11.9/31\n!\ninterface
-    Vlan3030\n   description vlan3030\n   no shutdown\n   vrf vr-3030\n   ip address
-    virtual 172.30.30.1/24\n!\ninterface Vlan3039\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-4040\n   no shutdown\n   mtu 1500\n   vrf vr-4040\n   ip address 172.17.11.9/31\n!\ninterface
-    Vlan3040\n   description vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.30.40.1/24\n!\ninterface Vlan4093\n   description MLAG_PEER_L3_PEERING\n
-    \  no shutdown\n   mtu 1500\n   ip address 172.17.11.9/31\n!\ninterface Vlan4094\n
-    \  description MLAG_PEER\n   no shutdown\n   mtu 1500\n   no autostate\n   ip
-    address 172.17.10.9/31\n!\ninterface Vxlan1\n   description CAGEA-BORDER-1B_VTEP\n
-    \  vxlan source-interface Loopback1\n   vxlan virtual-router encapsulation mac-address
-    mlag-system-id\n   vxlan udp-port 4789\n   vxlan vlan 2430 vni 12430\n   vxlan
-    vlan 2440 vni 12440\n   vxlan vlan 3030 vni 13030\n   vxlan vlan 3040 vni 13040\n
-    \  vxlan vrf vr-3030 vni 30\n   vxlan vrf vr-4040 vni 40\n!\nip virtual-router
-    mac-address 00:1c:73:00:00:99\n!\nip routing\nno ip routing vrf MGMT\nip routing
-    vrf vr-3030\nip routing vrf vr-4040\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n
-    \  seq 10 permit 172.17.8.0/24 eq 32\n   seq 20 permit 172.17.9.0/24 eq 32\n!\nmlag
-    configuration\n   domain-id mlag3\n   local-interface Vlan4094\n   peer-address
-    172.17.10.8\n   peer-link Port-Channel551\n   reload-delay mlag 300\n   reload-delay
-    non-mlag 330\n!\nroute-map RM-CONN-2-BGP permit 10\n   match ip address prefix-list
-    PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description
-    Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal
-    routing\n   set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx
-    1200 multiplier 3\n!\nrouter bgp 64517\n   router-id 172.17.8.6\n   maximum-paths
-    4 ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
+    shutdown\n   vrf MGMT\n   ip address 198.18.0.9/24\n!\ninterface Vlan3029\n   description
+    MLAG_PEER_L3_iBGP: vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n
+    \  ip address 172.17.11.9/31\n!\ninterface Vlan3030\n   description vlan3030\n
+    \  no shutdown\n   vrf vr-3030\n   ip address virtual 172.30.30.1/24\n!\ninterface
+    Vlan3039\n   description MLAG_PEER_L3_iBGP: vrf vr-4040\n   no shutdown\n   mtu
+    1500\n   vrf vr-4040\n   ip address 172.17.11.9/31\n!\ninterface Vlan3040\n   description
+    vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address virtual 172.30.40.1/24\n!\ninterface
+    Vlan4093\n   description MLAG_PEER_L3_PEERING\n   no shutdown\n   mtu 1500\n   ip
+    address 172.17.11.9/31\n!\ninterface Vlan4094\n   description MLAG_PEER\n   no
+    shutdown\n   mtu 1500\n   no autostate\n   ip address 172.17.10.9/31\n!\ninterface
+    Vxlan1\n   description CAGEA-BORDER-1B_VTEP\n   vxlan source-interface Loopback1\n
+    \  vxlan virtual-router encapsulation mac-address mlag-system-id\n   vxlan udp-port
+    4789\n   vxlan vlan 55 vni 10055\n   vxlan vlan 56 vni 10056\n   vxlan vlan 3030
+    vni 13030\n   vxlan vlan 3040 vni 13040\n   vxlan vrf vr-3030 vni 30\n   vxlan
+    vrf vr-4040 vni 40\n!\nip virtual-router mac-address 00:1c:73:00:00:99\n!\nip
+    routing\nno ip routing vrf MGMT\nip routing vrf vr-3030\nip routing vrf vr-4040\n!\nip
+    prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit 172.17.8.0/24 eq 32\n
+    \  seq 20 permit 172.17.9.0/24 eq 32\n!\nip prefix-list PL-MLAG-PEER-VRFS\n   seq
+    10 permit 172.17.11.8/31\n!\nmlag configuration\n   domain-id mlag3\n   local-interface
+    Vlan4094\n   peer-address 172.17.10.8\n   peer-link Port-Channel551\n   reload-delay
+    mlag 300\n   reload-delay non-mlag 330\n!\nip route vrf vr-3030 0.0.0.0/0 172.30.30.254\nip
+    route vrf vr-4040 0.0.0.0/0 172.30.40.254\n!\nroute-map RM-CONN-2-BGP permit 10\n
+    \  match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-CONN-2-BGP-VRFS
+    deny 10\n   match ip address prefix-list PL-MLAG-PEER-VRFS\n!\nroute-map RM-CONN-2-BGP-VRFS
+    permit 20\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description Make routes
+    learned over MLAG Peer-link less preferred on spines to ensure optimal routing\n
+    \  set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx 1200
+    multiplier 3\n!\nrouter bgp 64517\n   router-id 172.17.8.6\n   maximum-paths 4
+    ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
     bgp 20 200 200\n   graceful-restart restart-time 300\n   graceful-restart\n   neighbor
     EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
     \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop
@@ -158,22 +171,23 @@ cvp_configlets:
     172.17.8.12 peer group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.12 remote-as 64512\n
     \  neighbor 172.17.8.12 description CAGEA-SPINE2\n   neighbor 172.17.11.8 peer
     group MLAG-IPv4-UNDERLAY-PEER\n   neighbor 172.17.11.8 description CAGEA-BORDER-1A\n
-    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 2430\n      rd
-    172.17.8.6:12430\n      route-target both 12430:12430\n      redistribute learned\n
-    \  !\n   vlan 2440\n      rd 172.17.8.6:12440\n      route-target both 12440:12440\n
-    \     redistribute learned\n   !\n   vlan 3030\n      rd 172.17.8.6:13030\n      route-target
-    both 13030:13030\n      redistribute learned\n   !\n   vlan 3040\n      rd 172.17.8.6:13040\n
-    \     route-target both 13040:13040\n      redistribute learned\n   !\n   address-family
+    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 3030\n      rd
+    172.17.8.6:13030\n      route-target both 13030:13030\n      redistribute learned\n
+    \  !\n   vlan 3040\n      rd 172.17.8.6:13040\n      route-target both 13040:13040\n
+    \     redistribute learned\n   !\n   vlan 55\n      rd 172.17.8.6:10055\n      route-target
+    both 10055:10055\n      redistribute learned\n   !\n   vlan 56\n      rd 172.17.8.6:10056\n
+    \     route-target both 10056:10056\n      redistribute learned\n   !\n   address-family
     evpn\n      neighbor EVPN-OVERLAY-PEERS activate\n   !\n   address-family ipv4\n
     \     no neighbor EVPN-OVERLAY-PEERS activate\n      neighbor IPv4-UNDERLAY-PEERS
     activate\n      neighbor MLAG-IPv4-UNDERLAY-PEER activate\n   !\n   vrf vr-3030\n
     \     rd 172.17.8.6:30\n      route-target import evpn 30:30\n      route-target
     export evpn 30:30\n      router-id 172.17.8.6\n      neighbor 172.17.11.8 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n   !\n   vrf vr-4040\n
-    \     rd 172.17.8.6:40\n      route-target import evpn 40:40\n      route-target
-    export evpn 40:40\n      router-id 172.17.8.6\n      neighbor 172.17.11.8 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n!\nmanagement api
-    http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
+    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected route-map RM-CONN-2-BGP-VRFS\n
+    \     redistribute static\n   !\n   vrf vr-4040\n      rd 172.17.8.6:40\n      route-target
+    import evpn 40:40\n      route-target export evpn 40:40\n      router-id 172.17.8.6\n
+    \     neighbor 172.17.11.8 peer group MLAG-IPv4-UNDERLAY-PEER\n      redistribute
+    connected route-map RM-CONN-2-BGP-VRFS\n      redistribute static\n!\nmanagement
+    api http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
     shutdown\n!\nend\n"
   AVD_CAGEA-LEAF-1A: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n   exec
     /usr/bin/TerminAttr -cvaddr=198.18.0.1:9910 -cvauth=token,/tmp/token -cvvrf=MGMT
@@ -181,32 +195,30 @@ cvp_configlets:
     -taillogs\n   no shutdown\n!\nvlan internal order ascending range 1006 1199\n!\ntransceiver
     qsfp default-mode 4x10G\n!\nservice routing protocols model multi-agent\n!\nhostname
     CAGEA-LEAF-1A\n!\nspanning-tree mode mstp\nno spanning-tree vlan-id 4093-4094\nspanning-tree
-    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nvlan 2430\n   name
-    2430-transit\n!\nvlan 2440\n   name 2440-transit\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
+    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nusername cvpadmin
+    privilege 15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvlan
+    55\n   name VLAN55\n!\nvlan 56\n   name VLAN56\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
     \  trunk group LEAF_PEER_L3\n!\nvlan 3030\n   name vlan3030\n!\nvlan 3039\n   name
     MLAG_iBGP_vr-4040\n   trunk group LEAF_PEER_L3\n!\nvlan 3040\n   name vlan3040\n!\nvlan
     4093\n   name LEAF_PEER_L3\n   trunk group LEAF_PEER_L3\n!\nvlan 4094\n   name
     MLAG_PEER\n   trunk group MLAG\n!\nvrf instance MGMT\n!\nvrf instance vr-3030\n!\nvrf
-    instance vr-4040\n!\ninterface Port-Channel1\n   description TP1_PortChannel TP1\n
-    \  no shutdown\n   switchport\n   switchport trunk allowed vlan 3030\n   switchport
-    mode trunk\n   mlag 1\n   spanning-tree portfast\n!\ninterface Port-Channel551\n
-    \  description MLAG_PEER_CAGEA-LEAF-1B_Po551\n   no shutdown\n   switchport\n
-    \  switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n   switchport
-    trunk group MLAG\n!\ninterface Ethernet1\n   description TP1_Ethernet1\n   no
-    shutdown\n   channel-group 1 mode active\n!\ninterface Ethernet49/1\n   description
-    P2P_LINK_TO_CAGEA-SPINE1_Ethernet1/1\n   no shutdown\n   mtu 1500\n   no switchport\n
-    \  ip address 172.17.6.1/31\n!\ninterface Ethernet50/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet1/1\n
-    \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.3/31\n!\ninterface
-    Ethernet55/1\n   description MLAG_PEER_CAGEA-LEAF-1B_Ethernet55/1\n   no shutdown\n
-    \  channel-group 551 mode active\n!\ninterface Ethernet56/1\n   description MLAG_PEER_CAGEA-LEAF-1B_Ethernet56/1\n
-    \  no shutdown\n   channel-group 551 mode active\n!\ninterface Loopback0\n   description
-    EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.1/32\n!\ninterface
-    Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address
-    172.17.9.1/32\n!\ninterface Management1\n   description oob_management\n   no
-    shutdown\n   vrf MGMT\n   ip address 198.18.0.4/24\n!\ninterface Vlan2430\n   description
-    2430-transit\n   no shutdown\n   vrf vr-3030\n   ip address virtual 172.17.5.1/28\n!\ninterface
-    Vlan2440\n   description 2440-transit\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.17.5.17/28\n!\ninterface Vlan3029\n   description MLAG_PEER_L3_iBGP:
+    instance vr-4040\n!\ninterface Port-Channel1\n   no shutdown\n   switchport\n
+    \  switchport trunk allowed vlan 3030, 3040, 55, 56\n   switchport mode trunk\n
+    \  mlag 1\n   spanning-tree portfast\n!\ninterface Port-Channel551\n   description
+    MLAG_PEER_CAGEA-LEAF-1B_Po551\n   no shutdown\n   switchport\n   switchport mode
+    trunk\n   switchport trunk group LEAF_PEER_L3\n   switchport trunk group MLAG\n!\ninterface
+    Ethernet1\n   no shutdown\n   channel-group 1 mode active\n!\ninterface Ethernet49/1\n
+    \  description P2P_LINK_TO_CAGEA-SPINE1_Ethernet1/1\n   no shutdown\n   mtu 1500\n
+    \  no switchport\n   ip address 172.17.6.1/31\n!\ninterface Ethernet50/1\n   description
+    P2P_LINK_TO_CAGEA-SPINE2_Ethernet1/1\n   no shutdown\n   mtu 1500\n   no switchport\n
+    \  ip address 172.17.6.3/31\n!\ninterface Ethernet55/1\n   description MLAG_PEER_CAGEA-LEAF-1B_Ethernet55/1\n
+    \  no shutdown\n   channel-group 551 mode active\n!\ninterface Ethernet56/1\n
+    \  description MLAG_PEER_CAGEA-LEAF-1B_Ethernet56/1\n   no shutdown\n   channel-group
+    551 mode active\n!\ninterface Loopback0\n   description EVPN_Overlay_Peering\n
+    \  no shutdown\n   ip address 172.17.8.1/32\n!\ninterface Loopback1\n   description
+    VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address 172.17.9.1/32\n!\ninterface
+    Management1\n   description oob_management\n   no shutdown\n   vrf MGMT\n   ip
+    address 198.18.0.4/24\n!\ninterface Vlan3029\n   description MLAG_PEER_L3_iBGP:
     vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n   ip address 172.17.11.0/31\n!\ninterface
     Vlan3030\n   description vlan3030\n   no shutdown\n   vrf vr-3030\n   ip address
     virtual 172.30.30.1/24\n!\ninterface Vlan3039\n   description MLAG_PEER_L3_iBGP:
@@ -217,20 +229,23 @@ cvp_configlets:
     \  description MLAG_PEER\n   no shutdown\n   mtu 1500\n   no autostate\n   ip
     address 172.17.10.0/31\n!\ninterface Vxlan1\n   description CAGEA-LEAF-1A_VTEP\n
     \  vxlan source-interface Loopback1\n   vxlan virtual-router encapsulation mac-address
-    mlag-system-id\n   vxlan udp-port 4789\n   vxlan vlan 2430 vni 12430\n   vxlan
-    vlan 2440 vni 12440\n   vxlan vlan 3030 vni 13030\n   vxlan vlan 3040 vni 13040\n
-    \  vxlan vrf vr-3030 vni 30\n   vxlan vrf vr-4040 vni 40\n!\nip virtual-router
-    mac-address 00:1c:73:00:00:99\n!\nip routing\nno ip routing vrf MGMT\nip routing
-    vrf vr-3030\nip routing vrf vr-4040\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n
-    \  seq 10 permit 172.17.8.0/24 eq 32\n   seq 20 permit 172.17.9.0/24 eq 32\n!\nmlag
-    configuration\n   domain-id mlag1\n   local-interface Vlan4094\n   peer-address
-    172.17.10.1\n   peer-link Port-Channel551\n   reload-delay mlag 300\n   reload-delay
-    non-mlag 330\n!\nroute-map RM-CONN-2-BGP permit 10\n   match ip address prefix-list
-    PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description
-    Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal
-    routing\n   set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx
-    1200 multiplier 3\n!\nrouter bgp 64513\n   router-id 172.17.8.1\n   maximum-paths
-    4 ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
+    mlag-system-id\n   vxlan udp-port 4789\n   vxlan vlan 55 vni 10055\n   vxlan vlan
+    56 vni 10056\n   vxlan vlan 3030 vni 13030\n   vxlan vlan 3040 vni 13040\n   vxlan
+    vrf vr-3030 vni 30\n   vxlan vrf vr-4040 vni 40\n!\nip virtual-router mac-address
+    00:1c:73:00:00:99\n!\nip routing\nno ip routing vrf MGMT\nip routing vrf vr-3030\nip
+    routing vrf vr-4040\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit
+    172.17.8.0/24 eq 32\n   seq 20 permit 172.17.9.0/24 eq 32\n!\nip prefix-list PL-MLAG-PEER-VRFS\n
+    \  seq 10 permit 172.17.11.0/31\n!\nmlag configuration\n   domain-id mlag1\n   local-interface
+    Vlan4094\n   peer-address 172.17.10.1\n   peer-link Port-Channel551\n   reload-delay
+    mlag 300\n   reload-delay non-mlag 330\n!\nip route vrf vr-3030 0.0.0.0/0 172.30.30.254\nip
+    route vrf vr-4040 0.0.0.0/0 172.30.40.254\n!\nroute-map RM-CONN-2-BGP permit 10\n
+    \  match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-CONN-2-BGP-VRFS
+    deny 10\n   match ip address prefix-list PL-MLAG-PEER-VRFS\n!\nroute-map RM-CONN-2-BGP-VRFS
+    permit 20\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description Make routes
+    learned over MLAG Peer-link less preferred on spines to ensure optimal routing\n
+    \  set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx 1200
+    multiplier 3\n!\nrouter bgp 64513\n   router-id 172.17.8.1\n   maximum-paths 4
+    ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
     bgp 20 200 200\n   graceful-restart restart-time 300\n   graceful-restart\n   neighbor
     EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
     \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop
@@ -250,22 +265,23 @@ cvp_configlets:
     172.17.8.12 peer group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.12 remote-as 64512\n
     \  neighbor 172.17.8.12 description CAGEA-SPINE2\n   neighbor 172.17.11.1 peer
     group MLAG-IPv4-UNDERLAY-PEER\n   neighbor 172.17.11.1 description CAGEA-LEAF-1B\n
-    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 2430\n      rd
-    172.17.8.1:12430\n      route-target both 12430:12430\n      redistribute learned\n
-    \  !\n   vlan 2440\n      rd 172.17.8.1:12440\n      route-target both 12440:12440\n
-    \     redistribute learned\n   !\n   vlan 3030\n      rd 172.17.8.1:13030\n      route-target
-    both 13030:13030\n      redistribute learned\n   !\n   vlan 3040\n      rd 172.17.8.1:13040\n
-    \     route-target both 13040:13040\n      redistribute learned\n   !\n   address-family
+    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 3030\n      rd
+    172.17.8.1:13030\n      route-target both 13030:13030\n      redistribute learned\n
+    \  !\n   vlan 3040\n      rd 172.17.8.1:13040\n      route-target both 13040:13040\n
+    \     redistribute learned\n   !\n   vlan 55\n      rd 172.17.8.1:10055\n      route-target
+    both 10055:10055\n      redistribute learned\n   !\n   vlan 56\n      rd 172.17.8.1:10056\n
+    \     route-target both 10056:10056\n      redistribute learned\n   !\n   address-family
     evpn\n      neighbor EVPN-OVERLAY-PEERS activate\n   !\n   address-family ipv4\n
     \     no neighbor EVPN-OVERLAY-PEERS activate\n      neighbor IPv4-UNDERLAY-PEERS
     activate\n      neighbor MLAG-IPv4-UNDERLAY-PEER activate\n   !\n   vrf vr-3030\n
     \     rd 172.17.8.1:30\n      route-target import evpn 30:30\n      route-target
     export evpn 30:30\n      router-id 172.17.8.1\n      neighbor 172.17.11.1 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n   !\n   vrf vr-4040\n
-    \     rd 172.17.8.1:40\n      route-target import evpn 40:40\n      route-target
-    export evpn 40:40\n      router-id 172.17.8.1\n      neighbor 172.17.11.1 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n!\nmanagement api
-    http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
+    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected route-map RM-CONN-2-BGP-VRFS\n
+    \     redistribute static\n   !\n   vrf vr-4040\n      rd 172.17.8.1:40\n      route-target
+    import evpn 40:40\n      route-target export evpn 40:40\n      router-id 172.17.8.1\n
+    \     neighbor 172.17.11.1 peer group MLAG-IPv4-UNDERLAY-PEER\n      redistribute
+    connected route-map RM-CONN-2-BGP-VRFS\n      redistribute static\n!\nmanagement
+    api http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
     shutdown\n!\nend\n"
   AVD_CAGEA-LEAF-1B: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n   exec
     /usr/bin/TerminAttr -cvaddr=198.18.0.1:9910 -cvauth=token,/tmp/token -cvvrf=MGMT
@@ -273,19 +289,16 @@ cvp_configlets:
     -taillogs\n   no shutdown\n!\nvlan internal order ascending range 1006 1199\n!\ntransceiver
     qsfp default-mode 4x10G\n!\nservice routing protocols model multi-agent\n!\nhostname
     CAGEA-LEAF-1B\n!\nspanning-tree mode mstp\nno spanning-tree vlan-id 4093-4094\nspanning-tree
-    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nvlan 2430\n   name
-    2430-transit\n!\nvlan 2440\n   name 2440-transit\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
+    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nusername cvpadmin
+    privilege 15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvlan
+    55\n   name VLAN55\n!\nvlan 56\n   name VLAN56\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
     \  trunk group LEAF_PEER_L3\n!\nvlan 3030\n   name vlan3030\n!\nvlan 3039\n   name
     MLAG_iBGP_vr-4040\n   trunk group LEAF_PEER_L3\n!\nvlan 3040\n   name vlan3040\n!\nvlan
     4093\n   name LEAF_PEER_L3\n   trunk group LEAF_PEER_L3\n!\nvlan 4094\n   name
     MLAG_PEER\n   trunk group MLAG\n!\nvrf instance MGMT\n!\nvrf instance vr-3030\n!\nvrf
-    instance vr-4040\n!\ninterface Port-Channel1\n   description TP1_PortChannel TP1\n
-    \  no shutdown\n   switchport\n   switchport trunk allowed vlan 3030\n   switchport
-    mode trunk\n   mlag 1\n   spanning-tree portfast\n!\ninterface Port-Channel551\n
-    \  description MLAG_PEER_CAGEA-LEAF-1A_Po551\n   no shutdown\n   switchport\n
-    \  switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n   switchport
-    trunk group MLAG\n!\ninterface Ethernet1\n   description TP1_Ethernet2\n   no
-    shutdown\n   channel-group 1 mode active\n!\ninterface Ethernet49/1\n   description
+    instance vr-4040\n!\ninterface Port-Channel551\n   description MLAG_PEER_CAGEA-LEAF-1A_Po551\n
+    \  no shutdown\n   switchport\n   switchport mode trunk\n   switchport trunk group
+    LEAF_PEER_L3\n   switchport trunk group MLAG\n!\ninterface Ethernet49/1\n   description
     P2P_LINK_TO_CAGEA-SPINE1_Ethernet2/1\n   no shutdown\n   mtu 1500\n   no switchport\n
     \  ip address 172.17.6.5/31\n!\ninterface Ethernet50/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet2/1\n
     \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.7/31\n!\ninterface
@@ -295,34 +308,35 @@ cvp_configlets:
     EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.2/32\n!\ninterface
     Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address
     172.17.9.1/32\n!\ninterface Management1\n   description oob_management\n   no
-    shutdown\n   vrf MGMT\n   ip address 198.18.0.5/24\n!\ninterface Vlan2430\n   description
-    2430-transit\n   no shutdown\n   vrf vr-3030\n   ip address virtual 172.17.5.1/28\n!\ninterface
-    Vlan2440\n   description 2440-transit\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.17.5.17/28\n!\ninterface Vlan3029\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n   ip address 172.17.11.1/31\n!\ninterface
-    Vlan3030\n   description vlan3030\n   no shutdown\n   vrf vr-3030\n   ip address
-    virtual 172.30.30.1/24\n!\ninterface Vlan3039\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-4040\n   no shutdown\n   mtu 1500\n   vrf vr-4040\n   ip address 172.17.11.1/31\n!\ninterface
-    Vlan3040\n   description vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.30.40.1/24\n!\ninterface Vlan4093\n   description MLAG_PEER_L3_PEERING\n
-    \  no shutdown\n   mtu 1500\n   ip address 172.17.11.1/31\n!\ninterface Vlan4094\n
-    \  description MLAG_PEER\n   no shutdown\n   mtu 1500\n   no autostate\n   ip
-    address 172.17.10.1/31\n!\ninterface Vxlan1\n   description CAGEA-LEAF-1B_VTEP\n
-    \  vxlan source-interface Loopback1\n   vxlan virtual-router encapsulation mac-address
-    mlag-system-id\n   vxlan udp-port 4789\n   vxlan vlan 2430 vni 12430\n   vxlan
-    vlan 2440 vni 12440\n   vxlan vlan 3030 vni 13030\n   vxlan vlan 3040 vni 13040\n
-    \  vxlan vrf vr-3030 vni 30\n   vxlan vrf vr-4040 vni 40\n!\nip virtual-router
-    mac-address 00:1c:73:00:00:99\n!\nip routing\nno ip routing vrf MGMT\nip routing
-    vrf vr-3030\nip routing vrf vr-4040\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n
-    \  seq 10 permit 172.17.8.0/24 eq 32\n   seq 20 permit 172.17.9.0/24 eq 32\n!\nmlag
-    configuration\n   domain-id mlag1\n   local-interface Vlan4094\n   peer-address
-    172.17.10.0\n   peer-link Port-Channel551\n   reload-delay mlag 300\n   reload-delay
-    non-mlag 330\n!\nroute-map RM-CONN-2-BGP permit 10\n   match ip address prefix-list
-    PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description
-    Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal
-    routing\n   set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx
-    1200 multiplier 3\n!\nrouter bgp 64513\n   router-id 172.17.8.2\n   maximum-paths
-    4 ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
+    shutdown\n   vrf MGMT\n   ip address 198.18.0.5/24\n!\ninterface Vlan3029\n   description
+    MLAG_PEER_L3_iBGP: vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n
+    \  ip address 172.17.11.1/31\n!\ninterface Vlan3030\n   description vlan3030\n
+    \  no shutdown\n   vrf vr-3030\n   ip address virtual 172.30.30.1/24\n!\ninterface
+    Vlan3039\n   description MLAG_PEER_L3_iBGP: vrf vr-4040\n   no shutdown\n   mtu
+    1500\n   vrf vr-4040\n   ip address 172.17.11.1/31\n!\ninterface Vlan3040\n   description
+    vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address virtual 172.30.40.1/24\n!\ninterface
+    Vlan4093\n   description MLAG_PEER_L3_PEERING\n   no shutdown\n   mtu 1500\n   ip
+    address 172.17.11.1/31\n!\ninterface Vlan4094\n   description MLAG_PEER\n   no
+    shutdown\n   mtu 1500\n   no autostate\n   ip address 172.17.10.1/31\n!\ninterface
+    Vxlan1\n   description CAGEA-LEAF-1B_VTEP\n   vxlan source-interface Loopback1\n
+    \  vxlan virtual-router encapsulation mac-address mlag-system-id\n   vxlan udp-port
+    4789\n   vxlan vlan 55 vni 10055\n   vxlan vlan 56 vni 10056\n   vxlan vlan 3030
+    vni 13030\n   vxlan vlan 3040 vni 13040\n   vxlan vrf vr-3030 vni 30\n   vxlan
+    vrf vr-4040 vni 40\n!\nip virtual-router mac-address 00:1c:73:00:00:99\n!\nip
+    routing\nno ip routing vrf MGMT\nip routing vrf vr-3030\nip routing vrf vr-4040\n!\nip
+    prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit 172.17.8.0/24 eq 32\n
+    \  seq 20 permit 172.17.9.0/24 eq 32\n!\nip prefix-list PL-MLAG-PEER-VRFS\n   seq
+    10 permit 172.17.11.0/31\n!\nmlag configuration\n   domain-id mlag1\n   local-interface
+    Vlan4094\n   peer-address 172.17.10.0\n   peer-link Port-Channel551\n   reload-delay
+    mlag 300\n   reload-delay non-mlag 330\n!\nip route vrf vr-3030 0.0.0.0/0 172.30.30.254\nip
+    route vrf vr-4040 0.0.0.0/0 172.30.40.254\n!\nroute-map RM-CONN-2-BGP permit 10\n
+    \  match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-CONN-2-BGP-VRFS
+    deny 10\n   match ip address prefix-list PL-MLAG-PEER-VRFS\n!\nroute-map RM-CONN-2-BGP-VRFS
+    permit 20\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description Make routes
+    learned over MLAG Peer-link less preferred on spines to ensure optimal routing\n
+    \  set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx 1200
+    multiplier 3\n!\nrouter bgp 64513\n   router-id 172.17.8.2\n   maximum-paths 4
+    ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
     bgp 20 200 200\n   graceful-restart restart-time 300\n   graceful-restart\n   neighbor
     EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
     \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop
@@ -342,22 +356,23 @@ cvp_configlets:
     172.17.8.12 peer group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.12 remote-as 64512\n
     \  neighbor 172.17.8.12 description CAGEA-SPINE2\n   neighbor 172.17.11.0 peer
     group MLAG-IPv4-UNDERLAY-PEER\n   neighbor 172.17.11.0 description CAGEA-LEAF-1A\n
-    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 2430\n      rd
-    172.17.8.2:12430\n      route-target both 12430:12430\n      redistribute learned\n
-    \  !\n   vlan 2440\n      rd 172.17.8.2:12440\n      route-target both 12440:12440\n
-    \     redistribute learned\n   !\n   vlan 3030\n      rd 172.17.8.2:13030\n      route-target
-    both 13030:13030\n      redistribute learned\n   !\n   vlan 3040\n      rd 172.17.8.2:13040\n
-    \     route-target both 13040:13040\n      redistribute learned\n   !\n   address-family
+    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 3030\n      rd
+    172.17.8.2:13030\n      route-target both 13030:13030\n      redistribute learned\n
+    \  !\n   vlan 3040\n      rd 172.17.8.2:13040\n      route-target both 13040:13040\n
+    \     redistribute learned\n   !\n   vlan 55\n      rd 172.17.8.2:10055\n      route-target
+    both 10055:10055\n      redistribute learned\n   !\n   vlan 56\n      rd 172.17.8.2:10056\n
+    \     route-target both 10056:10056\n      redistribute learned\n   !\n   address-family
     evpn\n      neighbor EVPN-OVERLAY-PEERS activate\n   !\n   address-family ipv4\n
     \     no neighbor EVPN-OVERLAY-PEERS activate\n      neighbor IPv4-UNDERLAY-PEERS
     activate\n      neighbor MLAG-IPv4-UNDERLAY-PEER activate\n   !\n   vrf vr-3030\n
     \     rd 172.17.8.2:30\n      route-target import evpn 30:30\n      route-target
     export evpn 30:30\n      router-id 172.17.8.2\n      neighbor 172.17.11.0 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n   !\n   vrf vr-4040\n
-    \     rd 172.17.8.2:40\n      route-target import evpn 40:40\n      route-target
-    export evpn 40:40\n      router-id 172.17.8.2\n      neighbor 172.17.11.0 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n!\nmanagement api
-    http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
+    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected route-map RM-CONN-2-BGP-VRFS\n
+    \     redistribute static\n   !\n   vrf vr-4040\n      rd 172.17.8.2:40\n      route-target
+    import evpn 40:40\n      route-target export evpn 40:40\n      router-id 172.17.8.2\n
+    \     neighbor 172.17.11.0 peer group MLAG-IPv4-UNDERLAY-PEER\n      redistribute
+    connected route-map RM-CONN-2-BGP-VRFS\n      redistribute static\n!\nmanagement
+    api http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
     shutdown\n!\nend\n"
   AVD_CAGEA-LEAF-2A: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n   exec
     /usr/bin/TerminAttr -cvaddr=198.18.0.1:9910 -cvauth=token,/tmp/token -cvvrf=MGMT
@@ -365,19 +380,20 @@ cvp_configlets:
     -taillogs\n   no shutdown\n!\nvlan internal order ascending range 1006 1199\n!\ntransceiver
     qsfp default-mode 4x10G\n!\nservice routing protocols model multi-agent\n!\nhostname
     CAGEA-LEAF-2A\n!\nspanning-tree mode mstp\nno spanning-tree vlan-id 4093-4094\nspanning-tree
-    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nvlan 2430\n   name
-    2430-transit\n!\nvlan 2440\n   name 2440-transit\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
+    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nusername cvpadmin
+    privilege 15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvlan
+    55\n   name VLAN55\n!\nvlan 56\n   name VLAN56\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
     \  trunk group LEAF_PEER_L3\n!\nvlan 3030\n   name vlan3030\n!\nvlan 3039\n   name
     MLAG_iBGP_vr-4040\n   trunk group LEAF_PEER_L3\n!\nvlan 3040\n   name vlan3040\n!\nvlan
     4093\n   name LEAF_PEER_L3\n   trunk group LEAF_PEER_L3\n!\nvlan 4094\n   name
     MLAG_PEER\n   trunk group MLAG\n!\nvrf instance MGMT\n!\nvrf instance vr-3030\n!\nvrf
     instance vr-4040\n!\ninterface Port-Channel1\n   description TP2_PortChannel host3\n
-    \  no shutdown\n   switchport\n   switchport trunk allowed vlan 3030\n   switchport
-    mode trunk\n   mlag 1\n   spanning-tree portfast\n!\ninterface Port-Channel551\n
-    \  description MLAG_PEER_CAGEA-LEAF-2B_Po551\n   no shutdown\n   switchport\n
-    \  switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n   switchport
-    trunk group MLAG\n!\ninterface Ethernet1\n   description TP2_Ethernet1\n   no
-    shutdown\n   channel-group 1 mode active\n!\ninterface Ethernet49/1\n   description
+    \  no shutdown\n   switchport\n   switchport trunk allowed vlan 3030, 3040, 55,
+    56\n   switchport mode trunk\n   mlag 1\n   spanning-tree portfast\n!\ninterface
+    Port-Channel551\n   description MLAG_PEER_CAGEA-LEAF-2B_Po551\n   no shutdown\n
+    \  switchport\n   switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n
+    \  switchport trunk group MLAG\n!\ninterface Ethernet1\n   description TP2_Ethernet1\n
+    \  no shutdown\n   channel-group 1 mode active\n!\ninterface Ethernet49/1\n   description
     P2P_LINK_TO_CAGEA-SPINE1_Ethernet3/1\n   no shutdown\n   mtu 1500\n   no switchport\n
     \  ip address 172.17.6.9/31\n!\ninterface Ethernet50/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet3/1\n
     \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.11/31\n!\ninterface
@@ -387,34 +403,35 @@ cvp_configlets:
     EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.3/32\n!\ninterface
     Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address
     172.17.9.3/32\n!\ninterface Management1\n   description oob_management\n   no
-    shutdown\n   vrf MGMT\n   ip address 198.18.0.6/24\n!\ninterface Vlan2430\n   description
-    2430-transit\n   no shutdown\n   vrf vr-3030\n   ip address virtual 172.17.5.1/28\n!\ninterface
-    Vlan2440\n   description 2440-transit\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.17.5.17/28\n!\ninterface Vlan3029\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n   ip address 172.17.11.4/31\n!\ninterface
-    Vlan3030\n   description vlan3030\n   no shutdown\n   vrf vr-3030\n   ip address
-    virtual 172.30.30.1/24\n!\ninterface Vlan3039\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-4040\n   no shutdown\n   mtu 1500\n   vrf vr-4040\n   ip address 172.17.11.4/31\n!\ninterface
-    Vlan3040\n   description vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.30.40.1/24\n!\ninterface Vlan4093\n   description MLAG_PEER_L3_PEERING\n
-    \  no shutdown\n   mtu 1500\n   ip address 172.17.11.4/31\n!\ninterface Vlan4094\n
-    \  description MLAG_PEER\n   no shutdown\n   mtu 1500\n   no autostate\n   ip
-    address 172.17.10.4/31\n!\ninterface Vxlan1\n   description CAGEA-LEAF-2A_VTEP\n
-    \  vxlan source-interface Loopback1\n   vxlan virtual-router encapsulation mac-address
-    mlag-system-id\n   vxlan udp-port 4789\n   vxlan vlan 2430 vni 12430\n   vxlan
-    vlan 2440 vni 12440\n   vxlan vlan 3030 vni 13030\n   vxlan vlan 3040 vni 13040\n
-    \  vxlan vrf vr-3030 vni 30\n   vxlan vrf vr-4040 vni 40\n!\nip virtual-router
-    mac-address 00:1c:73:00:00:99\n!\nip routing\nno ip routing vrf MGMT\nip routing
-    vrf vr-3030\nip routing vrf vr-4040\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n
-    \  seq 10 permit 172.17.8.0/24 eq 32\n   seq 20 permit 172.17.9.0/24 eq 32\n!\nmlag
-    configuration\n   domain-id mlag2\n   local-interface Vlan4094\n   peer-address
-    172.17.10.5\n   peer-link Port-Channel551\n   reload-delay mlag 300\n   reload-delay
-    non-mlag 330\n!\nroute-map RM-CONN-2-BGP permit 10\n   match ip address prefix-list
-    PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description
-    Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal
-    routing\n   set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx
-    1200 multiplier 3\n!\nrouter bgp 64515\n   router-id 172.17.8.3\n   maximum-paths
-    4 ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
+    shutdown\n   vrf MGMT\n   ip address 198.18.0.6/24\n!\ninterface Vlan3029\n   description
+    MLAG_PEER_L3_iBGP: vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n
+    \  ip address 172.17.11.4/31\n!\ninterface Vlan3030\n   description vlan3030\n
+    \  no shutdown\n   vrf vr-3030\n   ip address virtual 172.30.30.1/24\n!\ninterface
+    Vlan3039\n   description MLAG_PEER_L3_iBGP: vrf vr-4040\n   no shutdown\n   mtu
+    1500\n   vrf vr-4040\n   ip address 172.17.11.4/31\n!\ninterface Vlan3040\n   description
+    vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address virtual 172.30.40.1/24\n!\ninterface
+    Vlan4093\n   description MLAG_PEER_L3_PEERING\n   no shutdown\n   mtu 1500\n   ip
+    address 172.17.11.4/31\n!\ninterface Vlan4094\n   description MLAG_PEER\n   no
+    shutdown\n   mtu 1500\n   no autostate\n   ip address 172.17.10.4/31\n!\ninterface
+    Vxlan1\n   description CAGEA-LEAF-2A_VTEP\n   vxlan source-interface Loopback1\n
+    \  vxlan virtual-router encapsulation mac-address mlag-system-id\n   vxlan udp-port
+    4789\n   vxlan vlan 55 vni 10055\n   vxlan vlan 56 vni 10056\n   vxlan vlan 3030
+    vni 13030\n   vxlan vlan 3040 vni 13040\n   vxlan vrf vr-3030 vni 30\n   vxlan
+    vrf vr-4040 vni 40\n!\nip virtual-router mac-address 00:1c:73:00:00:99\n!\nip
+    routing\nno ip routing vrf MGMT\nip routing vrf vr-3030\nip routing vrf vr-4040\n!\nip
+    prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit 172.17.8.0/24 eq 32\n
+    \  seq 20 permit 172.17.9.0/24 eq 32\n!\nip prefix-list PL-MLAG-PEER-VRFS\n   seq
+    10 permit 172.17.11.4/31\n!\nmlag configuration\n   domain-id mlag2\n   local-interface
+    Vlan4094\n   peer-address 172.17.10.5\n   peer-link Port-Channel551\n   reload-delay
+    mlag 300\n   reload-delay non-mlag 330\n!\nip route vrf vr-3030 0.0.0.0/0 172.30.30.254\nip
+    route vrf vr-4040 0.0.0.0/0 172.30.40.254\n!\nroute-map RM-CONN-2-BGP permit 10\n
+    \  match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-CONN-2-BGP-VRFS
+    deny 10\n   match ip address prefix-list PL-MLAG-PEER-VRFS\n!\nroute-map RM-CONN-2-BGP-VRFS
+    permit 20\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description Make routes
+    learned over MLAG Peer-link less preferred on spines to ensure optimal routing\n
+    \  set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx 1200
+    multiplier 3\n!\nrouter bgp 64515\n   router-id 172.17.8.3\n   maximum-paths 4
+    ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
     bgp 20 200 200\n   graceful-restart restart-time 300\n   graceful-restart\n   neighbor
     EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
     \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop
@@ -434,22 +451,23 @@ cvp_configlets:
     172.17.8.12 peer group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.12 remote-as 64512\n
     \  neighbor 172.17.8.12 description CAGEA-SPINE2\n   neighbor 172.17.11.5 peer
     group MLAG-IPv4-UNDERLAY-PEER\n   neighbor 172.17.11.5 description CAGEA-LEAF-2B\n
-    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 2430\n      rd
-    172.17.8.3:12430\n      route-target both 12430:12430\n      redistribute learned\n
-    \  !\n   vlan 2440\n      rd 172.17.8.3:12440\n      route-target both 12440:12440\n
-    \     redistribute learned\n   !\n   vlan 3030\n      rd 172.17.8.3:13030\n      route-target
-    both 13030:13030\n      redistribute learned\n   !\n   vlan 3040\n      rd 172.17.8.3:13040\n
-    \     route-target both 13040:13040\n      redistribute learned\n   !\n   address-family
+    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 3030\n      rd
+    172.17.8.3:13030\n      route-target both 13030:13030\n      redistribute learned\n
+    \  !\n   vlan 3040\n      rd 172.17.8.3:13040\n      route-target both 13040:13040\n
+    \     redistribute learned\n   !\n   vlan 55\n      rd 172.17.8.3:10055\n      route-target
+    both 10055:10055\n      redistribute learned\n   !\n   vlan 56\n      rd 172.17.8.3:10056\n
+    \     route-target both 10056:10056\n      redistribute learned\n   !\n   address-family
     evpn\n      neighbor EVPN-OVERLAY-PEERS activate\n   !\n   address-family ipv4\n
     \     no neighbor EVPN-OVERLAY-PEERS activate\n      neighbor IPv4-UNDERLAY-PEERS
     activate\n      neighbor MLAG-IPv4-UNDERLAY-PEER activate\n   !\n   vrf vr-3030\n
     \     rd 172.17.8.3:30\n      route-target import evpn 30:30\n      route-target
     export evpn 30:30\n      router-id 172.17.8.3\n      neighbor 172.17.11.5 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n   !\n   vrf vr-4040\n
-    \     rd 172.17.8.3:40\n      route-target import evpn 40:40\n      route-target
-    export evpn 40:40\n      router-id 172.17.8.3\n      neighbor 172.17.11.5 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n!\nmanagement api
-    http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
+    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected route-map RM-CONN-2-BGP-VRFS\n
+    \     redistribute static\n   !\n   vrf vr-4040\n      rd 172.17.8.3:40\n      route-target
+    import evpn 40:40\n      route-target export evpn 40:40\n      router-id 172.17.8.3\n
+    \     neighbor 172.17.11.5 peer group MLAG-IPv4-UNDERLAY-PEER\n      redistribute
+    connected route-map RM-CONN-2-BGP-VRFS\n      redistribute static\n!\nmanagement
+    api http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
     shutdown\n!\nend\n"
   AVD_CAGEA-LEAF-2B: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n   exec
     /usr/bin/TerminAttr -cvaddr=198.18.0.1:9910 -cvauth=token,/tmp/token -cvvrf=MGMT
@@ -457,19 +475,20 @@ cvp_configlets:
     -taillogs\n   no shutdown\n!\nvlan internal order ascending range 1006 1199\n!\ntransceiver
     qsfp default-mode 4x10G\n!\nservice routing protocols model multi-agent\n!\nhostname
     CAGEA-LEAF-2B\n!\nspanning-tree mode mstp\nno spanning-tree vlan-id 4093-4094\nspanning-tree
-    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nvlan 2430\n   name
-    2430-transit\n!\nvlan 2440\n   name 2440-transit\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
+    mst 0 priority 16384\n!\nno enable password\nno aaa root\n!\nusername cvpadmin
+    privilege 15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvlan
+    55\n   name VLAN55\n!\nvlan 56\n   name VLAN56\n!\nvlan 3029\n   name MLAG_iBGP_vr-3030\n
     \  trunk group LEAF_PEER_L3\n!\nvlan 3030\n   name vlan3030\n!\nvlan 3039\n   name
     MLAG_iBGP_vr-4040\n   trunk group LEAF_PEER_L3\n!\nvlan 3040\n   name vlan3040\n!\nvlan
     4093\n   name LEAF_PEER_L3\n   trunk group LEAF_PEER_L3\n!\nvlan 4094\n   name
     MLAG_PEER\n   trunk group MLAG\n!\nvrf instance MGMT\n!\nvrf instance vr-3030\n!\nvrf
     instance vr-4040\n!\ninterface Port-Channel1\n   description TP2_PortChannel host3\n
-    \  no shutdown\n   switchport\n   switchport trunk allowed vlan 3030\n   switchport
-    mode trunk\n   mlag 1\n   spanning-tree portfast\n!\ninterface Port-Channel551\n
-    \  description MLAG_PEER_CAGEA-LEAF-2A_Po551\n   no shutdown\n   switchport\n
-    \  switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n   switchport
-    trunk group MLAG\n!\ninterface Ethernet1\n   description TP2_Ethernet2\n   no
-    shutdown\n   channel-group 1 mode active\n!\ninterface Ethernet49/1\n   description
+    \  no shutdown\n   switchport\n   switchport trunk allowed vlan 3030, 3040, 55,
+    56\n   switchport mode trunk\n   mlag 1\n   spanning-tree portfast\n!\ninterface
+    Port-Channel551\n   description MLAG_PEER_CAGEA-LEAF-2A_Po551\n   no shutdown\n
+    \  switchport\n   switchport mode trunk\n   switchport trunk group LEAF_PEER_L3\n
+    \  switchport trunk group MLAG\n!\ninterface Ethernet1\n   description TP2_Ethernet2\n
+    \  no shutdown\n   channel-group 1 mode active\n!\ninterface Ethernet49/1\n   description
     P2P_LINK_TO_CAGEA-SPINE1_Ethernet4/1\n   no shutdown\n   mtu 1500\n   no switchport\n
     \  ip address 172.17.6.13/31\n!\ninterface Ethernet50/1\n   description P2P_LINK_TO_CAGEA-SPINE2_Ethernet4/1\n
     \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.15/31\n!\ninterface
@@ -479,34 +498,35 @@ cvp_configlets:
     EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.4/32\n!\ninterface
     Loopback1\n   description VTEP_VXLAN_Tunnel_Source\n   no shutdown\n   ip address
     172.17.9.3/32\n!\ninterface Management1\n   description oob_management\n   no
-    shutdown\n   vrf MGMT\n   ip address 198.18.0.7/24\n!\ninterface Vlan2430\n   description
-    2430-transit\n   no shutdown\n   vrf vr-3030\n   ip address virtual 172.17.5.1/28\n!\ninterface
-    Vlan2440\n   description 2440-transit\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.17.5.17/28\n!\ninterface Vlan3029\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n   ip address 172.17.11.5/31\n!\ninterface
-    Vlan3030\n   description vlan3030\n   no shutdown\n   vrf vr-3030\n   ip address
-    virtual 172.30.30.1/24\n!\ninterface Vlan3039\n   description MLAG_PEER_L3_iBGP:
-    vrf vr-4040\n   no shutdown\n   mtu 1500\n   vrf vr-4040\n   ip address 172.17.11.5/31\n!\ninterface
-    Vlan3040\n   description vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address
-    virtual 172.30.40.1/24\n!\ninterface Vlan4093\n   description MLAG_PEER_L3_PEERING\n
-    \  no shutdown\n   mtu 1500\n   ip address 172.17.11.5/31\n!\ninterface Vlan4094\n
-    \  description MLAG_PEER\n   no shutdown\n   mtu 1500\n   no autostate\n   ip
-    address 172.17.10.5/31\n!\ninterface Vxlan1\n   description CAGEA-LEAF-2B_VTEP\n
-    \  vxlan source-interface Loopback1\n   vxlan virtual-router encapsulation mac-address
-    mlag-system-id\n   vxlan udp-port 4789\n   vxlan vlan 2430 vni 12430\n   vxlan
-    vlan 2440 vni 12440\n   vxlan vlan 3030 vni 13030\n   vxlan vlan 3040 vni 13040\n
-    \  vxlan vrf vr-3030 vni 30\n   vxlan vrf vr-4040 vni 40\n!\nip virtual-router
-    mac-address 00:1c:73:00:00:99\n!\nip routing\nno ip routing vrf MGMT\nip routing
-    vrf vr-3030\nip routing vrf vr-4040\n!\nip prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n
-    \  seq 10 permit 172.17.8.0/24 eq 32\n   seq 20 permit 172.17.9.0/24 eq 32\n!\nmlag
-    configuration\n   domain-id mlag2\n   local-interface Vlan4094\n   peer-address
-    172.17.10.4\n   peer-link Port-Channel551\n   reload-delay mlag 300\n   reload-delay
-    non-mlag 330\n!\nroute-map RM-CONN-2-BGP permit 10\n   match ip address prefix-list
-    PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description
-    Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal
-    routing\n   set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx
-    1200 multiplier 3\n!\nrouter bgp 64515\n   router-id 172.17.8.4\n   maximum-paths
-    4 ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
+    shutdown\n   vrf MGMT\n   ip address 198.18.0.7/24\n!\ninterface Vlan3029\n   description
+    MLAG_PEER_L3_iBGP: vrf vr-3030\n   no shutdown\n   mtu 1500\n   vrf vr-3030\n
+    \  ip address 172.17.11.5/31\n!\ninterface Vlan3030\n   description vlan3030\n
+    \  no shutdown\n   vrf vr-3030\n   ip address virtual 172.30.30.1/24\n!\ninterface
+    Vlan3039\n   description MLAG_PEER_L3_iBGP: vrf vr-4040\n   no shutdown\n   mtu
+    1500\n   vrf vr-4040\n   ip address 172.17.11.5/31\n!\ninterface Vlan3040\n   description
+    vlan3040\n   no shutdown\n   vrf vr-4040\n   ip address virtual 172.30.40.1/24\n!\ninterface
+    Vlan4093\n   description MLAG_PEER_L3_PEERING\n   no shutdown\n   mtu 1500\n   ip
+    address 172.17.11.5/31\n!\ninterface Vlan4094\n   description MLAG_PEER\n   no
+    shutdown\n   mtu 1500\n   no autostate\n   ip address 172.17.10.5/31\n!\ninterface
+    Vxlan1\n   description CAGEA-LEAF-2B_VTEP\n   vxlan source-interface Loopback1\n
+    \  vxlan virtual-router encapsulation mac-address mlag-system-id\n   vxlan udp-port
+    4789\n   vxlan vlan 55 vni 10055\n   vxlan vlan 56 vni 10056\n   vxlan vlan 3030
+    vni 13030\n   vxlan vlan 3040 vni 13040\n   vxlan vrf vr-3030 vni 30\n   vxlan
+    vrf vr-4040 vni 40\n!\nip virtual-router mac-address 00:1c:73:00:00:99\n!\nip
+    routing\nno ip routing vrf MGMT\nip routing vrf vr-3030\nip routing vrf vr-4040\n!\nip
+    prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n   seq 10 permit 172.17.8.0/24 eq 32\n
+    \  seq 20 permit 172.17.9.0/24 eq 32\n!\nip prefix-list PL-MLAG-PEER-VRFS\n   seq
+    10 permit 172.17.11.4/31\n!\nmlag configuration\n   domain-id mlag2\n   local-interface
+    Vlan4094\n   peer-address 172.17.10.4\n   peer-link Port-Channel551\n   reload-delay
+    mlag 300\n   reload-delay non-mlag 330\n!\nip route vrf vr-3030 0.0.0.0/0 172.30.30.254\nip
+    route vrf vr-4040 0.0.0.0/0 172.30.40.254\n!\nroute-map RM-CONN-2-BGP permit 10\n
+    \  match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY\n!\nroute-map RM-CONN-2-BGP-VRFS
+    deny 10\n   match ip address prefix-list PL-MLAG-PEER-VRFS\n!\nroute-map RM-CONN-2-BGP-VRFS
+    permit 20\n!\nroute-map RM-MLAG-PEER-IN permit 10\n   description Make routes
+    learned over MLAG Peer-link less preferred on spines to ensure optimal routing\n
+    \  set origin incomplete\n!\nrouter bfd\n   multihop interval 1200 min-rx 1200
+    multiplier 3\n!\nrouter bgp 64515\n   router-id 172.17.8.4\n   maximum-paths 4
+    ecmp 4\n   no bgp default ipv4-unicast\n   no bgp default ipv4-unicast\n   distance
     bgp 20 200 200\n   graceful-restart restart-time 300\n   graceful-restart\n   neighbor
     EVPN-OVERLAY-PEERS peer group\n   neighbor EVPN-OVERLAY-PEERS update-source Loopback0\n
     \  neighbor EVPN-OVERLAY-PEERS bfd\n   neighbor EVPN-OVERLAY-PEERS ebgp-multihop
@@ -526,40 +546,42 @@ cvp_configlets:
     172.17.8.12 peer group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.12 remote-as 64512\n
     \  neighbor 172.17.8.12 description CAGEA-SPINE2\n   neighbor 172.17.11.4 peer
     group MLAG-IPv4-UNDERLAY-PEER\n   neighbor 172.17.11.4 description CAGEA-LEAF-2A\n
-    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 2430\n      rd
-    172.17.8.4:12430\n      route-target both 12430:12430\n      redistribute learned\n
-    \  !\n   vlan 2440\n      rd 172.17.8.4:12440\n      route-target both 12440:12440\n
-    \     redistribute learned\n   !\n   vlan 3030\n      rd 172.17.8.4:13030\n      route-target
-    both 13030:13030\n      redistribute learned\n   !\n   vlan 3040\n      rd 172.17.8.4:13040\n
-    \     route-target both 13040:13040\n      redistribute learned\n   !\n   address-family
+    \  redistribute connected route-map RM-CONN-2-BGP\n   !\n   vlan 3030\n      rd
+    172.17.8.4:13030\n      route-target both 13030:13030\n      redistribute learned\n
+    \  !\n   vlan 3040\n      rd 172.17.8.4:13040\n      route-target both 13040:13040\n
+    \     redistribute learned\n   !\n   vlan 55\n      rd 172.17.8.4:10055\n      route-target
+    both 10055:10055\n      redistribute learned\n   !\n   vlan 56\n      rd 172.17.8.4:10056\n
+    \     route-target both 10056:10056\n      redistribute learned\n   !\n   address-family
     evpn\n      neighbor EVPN-OVERLAY-PEERS activate\n   !\n   address-family ipv4\n
     \     no neighbor EVPN-OVERLAY-PEERS activate\n      neighbor IPv4-UNDERLAY-PEERS
     activate\n      neighbor MLAG-IPv4-UNDERLAY-PEER activate\n   !\n   vrf vr-3030\n
     \     rd 172.17.8.4:30\n      route-target import evpn 30:30\n      route-target
     export evpn 30:30\n      router-id 172.17.8.4\n      neighbor 172.17.11.4 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n   !\n   vrf vr-4040\n
-    \     rd 172.17.8.4:40\n      route-target import evpn 40:40\n      route-target
-    export evpn 40:40\n      router-id 172.17.8.4\n      neighbor 172.17.11.4 peer
-    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected\n!\nmanagement api
-    http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
+    group MLAG-IPv4-UNDERLAY-PEER\n      redistribute connected route-map RM-CONN-2-BGP-VRFS\n
+    \     redistribute static\n   !\n   vrf vr-4040\n      rd 172.17.8.4:40\n      route-target
+    import evpn 40:40\n      route-target export evpn 40:40\n      router-id 172.17.8.4\n
+    \     neighbor 172.17.11.4 peer group MLAG-IPv4-UNDERLAY-PEER\n      redistribute
+    connected route-map RM-CONN-2-BGP-VRFS\n      redistribute static\n!\nmanagement
+    api http-commands\n   protocol https\n   no shutdown\n   !\n   vrf MGMT\n      no
     shutdown\n!\nend\n"
   AVD_CAGEA-SPINE1: "!RANCID-CONTENT-TYPE: arista\n!\ndaemon TerminAttr\n   exec /usr/bin/TerminAttr
     -cvaddr=198.18.0.1:9910 -cvauth=token,/tmp/token -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata
     -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs\n   no shutdown\n!\nvlan
     internal order ascending range 1006 1199\n!\ntransceiver qsfp default-mode 4x10G\n!\nservice
     routing protocols model multi-agent\n!\nhostname CAGEA-SPINE1\n!\nspanning-tree
-    mode none\n!\nno enable password\nno aaa root\n!\nvrf instance MGMT\n!\ninterface
-    Ethernet1/1\n   description P2P_LINK_TO_CAGEA-LEAF-1A_Ethernet49/1\n   no shutdown\n
-    \  mtu 1500\n   no switchport\n   ip address 172.17.6.0/31\n!\ninterface Ethernet2/1\n
-    \  description P2P_LINK_TO_CAGEA-LEAF-1B_Ethernet49/1\n   no shutdown\n   mtu
-    1500\n   no switchport\n   ip address 172.17.6.4/31\n!\ninterface Ethernet3/1\n
+    mode none\n!\nno enable password\nno aaa root\n!\nusername cvpadmin privilege
+    15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvrf
+    instance MGMT\n!\ninterface Ethernet1/1\n   description P2P_LINK_TO_CAGEA-LEAF-1A_Ethernet49/1\n
+    \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.0/31\n!\ninterface
+    Ethernet2/1\n   description P2P_LINK_TO_CAGEA-LEAF-1B_Ethernet49/1\n   no shutdown\n
+    \  mtu 1500\n   no switchport\n   ip address 172.17.6.4/31\n!\ninterface Ethernet3/1\n
     \  description P2P_LINK_TO_CAGEA-LEAF-2A_Ethernet49/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.8/31\n!\ninterface Ethernet4/1\n
     \  description P2P_LINK_TO_CAGEA-LEAF-2B_Ethernet49/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.12/31\n!\ninterface Ethernet51/1\n
-    \  description P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet49/1\n   no shutdown\n   mtu
+    \  description P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet51/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.16/31\n!\ninterface Ethernet52/1\n
-    \  description P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet49/1\n   no shutdown\n   mtu
+    \  description P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet51/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.20/31\n!\ninterface Loopback0\n
     \  description EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.11/32\n!\ninterface
     Management1\n   description oob_management\n   no shutdown\n   vrf MGMT\n   ip
@@ -583,9 +605,9 @@ cvp_configlets:
     group IPv4-UNDERLAY-PEERS\n   neighbor 172.17.6.13 remote-as 64515\n   neighbor
     172.17.6.13 description CAGEA-LEAF-2B_Ethernet49/1\n   neighbor 172.17.6.17 peer
     group IPv4-UNDERLAY-PEERS\n   neighbor 172.17.6.17 remote-as 64517\n   neighbor
-    172.17.6.17 description CAGEA-BORDER-1A_Ethernet49/1\n   neighbor 172.17.6.21
+    172.17.6.17 description CAGEA-BORDER-1A_Ethernet51/1\n   neighbor 172.17.6.21
     peer group IPv4-UNDERLAY-PEERS\n   neighbor 172.17.6.21 remote-as 64517\n   neighbor
-    172.17.6.21 description CAGEA-BORDER-1B_Ethernet49/1\n   neighbor 172.17.8.1 peer
+    172.17.6.21 description CAGEA-BORDER-1B_Ethernet51/1\n   neighbor 172.17.8.1 peer
     group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.1 remote-as 64513\n   neighbor
     172.17.8.1 description CAGEA-LEAF-1A\n   neighbor 172.17.8.2 peer group EVPN-OVERLAY-PEERS\n
     \  neighbor 172.17.8.2 remote-as 64513\n   neighbor 172.17.8.2 description CAGEA-LEAF-1B\n
@@ -605,18 +627,19 @@ cvp_configlets:
     -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs\n   no shutdown\n!\nvlan
     internal order ascending range 1006 1199\n!\ntransceiver qsfp default-mode 4x10G\n!\nservice
     routing protocols model multi-agent\n!\nhostname CAGEA-SPINE2\n!\nspanning-tree
-    mode none\n!\nno enable password\nno aaa root\n!\nvrf instance MGMT\n!\ninterface
-    Ethernet1/1\n   description P2P_LINK_TO_CAGEA-LEAF-1A_Ethernet50/1\n   no shutdown\n
-    \  mtu 1500\n   no switchport\n   ip address 172.17.6.2/31\n!\ninterface Ethernet2/1\n
-    \  description P2P_LINK_TO_CAGEA-LEAF-1B_Ethernet50/1\n   no shutdown\n   mtu
-    1500\n   no switchport\n   ip address 172.17.6.6/31\n!\ninterface Ethernet3/1\n
+    mode none\n!\nno enable password\nno aaa root\n!\nusername cvpadmin privilege
+    15 role network-admin secret sha512 $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/\n!\nvrf
+    instance MGMT\n!\ninterface Ethernet1/1\n   description P2P_LINK_TO_CAGEA-LEAF-1A_Ethernet50/1\n
+    \  no shutdown\n   mtu 1500\n   no switchport\n   ip address 172.17.6.2/31\n!\ninterface
+    Ethernet2/1\n   description P2P_LINK_TO_CAGEA-LEAF-1B_Ethernet50/1\n   no shutdown\n
+    \  mtu 1500\n   no switchport\n   ip address 172.17.6.6/31\n!\ninterface Ethernet3/1\n
     \  description P2P_LINK_TO_CAGEA-LEAF-2A_Ethernet50/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.10/31\n!\ninterface Ethernet4/1\n
     \  description P2P_LINK_TO_CAGEA-LEAF-2B_Ethernet50/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.14/31\n!\ninterface Ethernet51/1\n
-    \  description P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet50/1\n   no shutdown\n   mtu
+    \  description P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet52/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.18/31\n!\ninterface Ethernet52/1\n
-    \  description P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet50/1\n   no shutdown\n   mtu
+    \  description P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet52/1\n   no shutdown\n   mtu
     1500\n   no switchport\n   ip address 172.17.6.22/31\n!\ninterface Loopback0\n
     \  description EVPN_Overlay_Peering\n   no shutdown\n   ip address 172.17.8.12/32\n!\ninterface
     Management1\n   description oob_management\n   no shutdown\n   vrf MGMT\n   ip
@@ -640,9 +663,9 @@ cvp_configlets:
     group IPv4-UNDERLAY-PEERS\n   neighbor 172.17.6.15 remote-as 64515\n   neighbor
     172.17.6.15 description CAGEA-LEAF-2B_Ethernet50/1\n   neighbor 172.17.6.19 peer
     group IPv4-UNDERLAY-PEERS\n   neighbor 172.17.6.19 remote-as 64517\n   neighbor
-    172.17.6.19 description CAGEA-BORDER-1A_Ethernet50/1\n   neighbor 172.17.6.23
+    172.17.6.19 description CAGEA-BORDER-1A_Ethernet52/1\n   neighbor 172.17.6.23
     peer group IPv4-UNDERLAY-PEERS\n   neighbor 172.17.6.23 remote-as 64517\n   neighbor
-    172.17.6.23 description CAGEA-BORDER-1B_Ethernet50/1\n   neighbor 172.17.8.1 peer
+    172.17.6.23 description CAGEA-BORDER-1B_Ethernet52/1\n   neighbor 172.17.8.1 peer
     group EVPN-OVERLAY-PEERS\n   neighbor 172.17.8.1 remote-as 64513\n   neighbor
     172.17.8.1 description CAGEA-LEAF-1A\n   neighbor 172.17.8.2 peer group EVPN-OVERLAY-PEERS\n
     \  neighbor 172.17.8.2 remote-as 64513\n   neighbor 172.17.8.2 description CAGEA-LEAF-1B\n

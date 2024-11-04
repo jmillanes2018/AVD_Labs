@@ -89,6 +89,8 @@ router_bgp:
         - '30:30'
     redistribute_routes:
     - source_protocol: connected
+      route_map: RM-CONN-2-BGP-VRFS
+    - source_protocol: static
     neighbors:
     - ip_address: 172.17.11.0
       peer_group: MLAG-IPv4-UNDERLAY-PEER
@@ -106,18 +108,12 @@ router_bgp:
         - '40:40'
     redistribute_routes:
     - source_protocol: connected
+      route_map: RM-CONN-2-BGP-VRFS
+    - source_protocol: static
     neighbors:
     - ip_address: 172.17.11.0
       peer_group: MLAG-IPv4-UNDERLAY-PEER
   vlans:
-  - id: 2430
-    tenant: JORGE
-    rd: 172.17.8.2:12430
-    route_targets:
-      both:
-      - 12430:12430
-    redistribute_routes:
-    - learned
   - id: 3030
     tenant: JORGE
     rd: 172.17.8.2:13030
@@ -126,20 +122,28 @@ router_bgp:
       - 13030:13030
     redistribute_routes:
     - learned
-  - id: 2440
-    tenant: JORGE
-    rd: 172.17.8.2:12440
-    route_targets:
-      both:
-      - 12440:12440
-    redistribute_routes:
-    - learned
   - id: 3040
     tenant: JORGE
     rd: 172.17.8.2:13040
     route_targets:
       both:
       - 13040:13040
+    redistribute_routes:
+    - learned
+  - id: 55
+    tenant: JORGE
+    rd: 172.17.8.2:10055
+    route_targets:
+      both:
+      - 10055:10055
+    redistribute_routes:
+    - learned
+  - id: 56
+    tenant: JORGE
+    rd: 172.17.8.2:10056
+    route_targets:
+      both:
+      - 10056:10056
     redistribute_routes:
     - learned
 service_routing_protocols_model: multi-agent
@@ -165,6 +169,11 @@ spanning_tree:
   - id: '0'
     priority: 16384
   no_spanning_tree_vlan: 4093-4094
+local_users:
+- name: cvpadmin
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$a5h8/JDp.VlUQfEW$C8ypm0KVqrxiaQG9PpDCyO4C4ryspfBiStKN4/yNvLMHYjyATYpJosysgg4DafJxv/6YJjAWO9dS6usREU7wN/
 vrfs:
 - name: MGMT
   ip_routing: false
@@ -197,9 +206,6 @@ vlans:
   name: MLAG_PEER
   trunk_groups:
   - MLAG
-- id: 2430
-  name: 2430-transit
-  tenant: JORGE
 - id: 3030
   name: vlan3030
   tenant: JORGE
@@ -208,9 +214,6 @@ vlans:
   trunk_groups:
   - LEAF_PEER_L3
   tenant: JORGE
-- id: 2440
-  name: 2440-transit
-  tenant: JORGE
 - id: 3040
   name: vlan3040
   tenant: JORGE
@@ -218,6 +221,12 @@ vlans:
   name: MLAG_iBGP_vr-4040
   trunk_groups:
   - LEAF_PEER_L3
+  tenant: JORGE
+- id: 55
+  name: VLAN55
+  tenant: JORGE
+- id: 56
+  name: VLAN56
   tenant: JORGE
 vlan_interfaces:
 - name: Vlan4093
@@ -231,12 +240,6 @@ vlan_interfaces:
   no_autostate: true
   mtu: 1500
   ip_address: 172.17.10.1/31
-- name: Vlan2430
-  tenant: JORGE
-  description: 2430-transit
-  shutdown: false
-  ip_address_virtual: 172.17.5.1/28
-  vrf: vr-3030
 - name: Vlan3030
   tenant: JORGE
   description: vlan3030
@@ -251,12 +254,6 @@ vlan_interfaces:
   vrf: vr-3030
   mtu: 1500
   ip_address: 172.17.11.1/31
-- name: Vlan2440
-  tenant: JORGE
-  description: 2440-transit
-  shutdown: false
-  ip_address_virtual: 172.17.5.17/28
-  vrf: vr-4040
 - name: Vlan3040
   tenant: JORGE
   description: vlan3040
@@ -280,14 +277,6 @@ port_channel_interfaces:
   trunk_groups:
   - LEAF_PEER_L3
   - MLAG
-- name: Port-Channel1
-  description: TP1_PortChannel TP1
-  type: switched
-  shutdown: false
-  mode: trunk
-  vlans: '3030'
-  spanning_tree_portfast: edge
-  mlag: 1
 ethernet_interfaces:
 - name: Ethernet55/1
   peer: CAGEA-LEAF-1A
@@ -327,16 +316,6 @@ ethernet_interfaces:
   mtu: 1500
   type: routed
   ip_address: 172.17.6.7/31
-- name: Ethernet1
-  peer: TP1
-  peer_interface: Ethernet2
-  peer_type: server
-  description: TP1_Ethernet2
-  shutdown: false
-  type: port-channel-member
-  channel_group:
-    id: 1
-    mode: active
 mlag_configuration:
   domain_id: mlag1
   local_interface: Vlan4094
@@ -358,6 +337,14 @@ route_maps:
     type: permit
     match:
     - ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+- name: RM-CONN-2-BGP-VRFS
+  sequence_numbers:
+  - sequence: 10
+    type: deny
+    match:
+    - ip address prefix-list PL-MLAG-PEER-VRFS
+  - sequence: 20
+    type: permit
 loopback_interfaces:
 - name: Loopback0
   description: EVPN_Overlay_Peering
@@ -374,6 +361,10 @@ prefix_lists:
     action: permit 172.17.8.0/24 eq 32
   - sequence: 20
     action: permit 172.17.9.0/24 eq 32
+- name: PL-MLAG-PEER-VRFS
+  sequence_numbers:
+  - sequence: 10
+    action: permit 172.17.11.0/31
 router_bfd:
   multihop:
     interval: 1200
@@ -382,6 +373,13 @@ router_bfd:
 ip_igmp_snooping:
   globally_enabled: true
 ip_virtual_router_mac_address: 00:1c:73:00:00:99
+static_routes:
+- destination_address_prefix: 0.0.0.0/0
+  gateway: 172.30.30.254
+  vrf: vr-3030
+- destination_address_prefix: 0.0.0.0/0
+  gateway: 172.30.40.254
+  vrf: vr-4040
 vxlan_interface:
   Vxlan1:
     description: CAGEA-LEAF-1B_VTEP
@@ -390,14 +388,14 @@ vxlan_interface:
       source_interface: Loopback1
       virtual_router_encapsulation_mac_address: mlag-system-id
       vlans:
-      - id: 2430
-        vni: 12430
       - id: 3030
         vni: 13030
-      - id: 2440
-        vni: 12440
       - id: 3040
         vni: 13040
+      - id: 55
+        vni: 10055
+      - id: 56
+        vni: 10056
       vrfs:
       - name: vr-3030
         vni: 30

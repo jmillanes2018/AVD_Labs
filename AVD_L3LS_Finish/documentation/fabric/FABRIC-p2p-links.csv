@@ -1,8 +1,8 @@
 Type,Node,Node Interface,Leaf IP Address,Peer Type,Peer Node,Peer Interface,Peer IP Address
-l3leaf,CAGEA-BORDER-1A,Ethernet49/1,172.17.6.17/31,spine,CAGEA-SPINE1,Ethernet51/1,172.17.6.16/31
-l3leaf,CAGEA-BORDER-1A,Ethernet50/1,172.17.6.19/31,spine,CAGEA-SPINE2,Ethernet51/1,172.17.6.18/31
-l3leaf,CAGEA-BORDER-1B,Ethernet49/1,172.17.6.21/31,spine,CAGEA-SPINE1,Ethernet52/1,172.17.6.20/31
-l3leaf,CAGEA-BORDER-1B,Ethernet50/1,172.17.6.23/31,spine,CAGEA-SPINE2,Ethernet52/1,172.17.6.22/31
+l3leaf,CAGEA-BORDER-1A,Ethernet51/1,172.17.6.17/31,spine,CAGEA-SPINE1,Ethernet51/1,172.17.6.16/31
+l3leaf,CAGEA-BORDER-1A,Ethernet52/1,172.17.6.19/31,spine,CAGEA-SPINE2,Ethernet51/1,172.17.6.18/31
+l3leaf,CAGEA-BORDER-1B,Ethernet51/1,172.17.6.21/31,spine,CAGEA-SPINE1,Ethernet52/1,172.17.6.20/31
+l3leaf,CAGEA-BORDER-1B,Ethernet52/1,172.17.6.23/31,spine,CAGEA-SPINE2,Ethernet52/1,172.17.6.22/31
 l3leaf,CAGEA-LEAF-1A,Ethernet49/1,172.17.6.1/31,spine,CAGEA-SPINE1,Ethernet1/1,172.17.6.0/31
 l3leaf,CAGEA-LEAF-1A,Ethernet50/1,172.17.6.3/31,spine,CAGEA-SPINE2,Ethernet1/1,172.17.6.2/31
 l3leaf,CAGEA-LEAF-1B,Ethernet49/1,172.17.6.5/31,spine,CAGEA-SPINE1,Ethernet2/1,172.17.6.4/31

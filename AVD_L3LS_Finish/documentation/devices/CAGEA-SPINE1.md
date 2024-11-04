@@ -5,6 +5,8 @@
 - [Management](#management)
   - [Management Interfaces](#management-interfaces)
   - [Management API HTTP](#management-api-http)
+- [Authentication](#authentication)
+  - [Local Users](#local-users)
 - [Monitoring](#monitoring)
   - [TerminAttr Daemon](#terminattr-daemon)
 - [Spanning Tree](#spanning-tree)
@@ -85,6 +87,23 @@ management api http-commands
       no shutdown
 ```
 
+## Authentication
+
+### Local Users
+
+#### Local Users Summary
+
+| User | Privilege | Role | Disabled | Shell |
+| ---- | --------- | ---- | -------- | ----- |
+| cvpadmin | 15 | network-admin | False | - |
+
+#### Local Users Device Configuration
+
+```eos
+!
+username cvpadmin privilege 15 role network-admin secret sha512 <removed>
+```
+
 ## Monitoring
 
 ### TerminAttr Daemon
@@ -153,8 +172,8 @@ vlan internal order ascending range 1006 1199
 | Ethernet2/1 | P2P_LINK_TO_CAGEA-LEAF-1B_Ethernet49/1 | routed | - | 172.17.6.4/31 | default | 1500 | False | - | - |
 | Ethernet3/1 | P2P_LINK_TO_CAGEA-LEAF-2A_Ethernet49/1 | routed | - | 172.17.6.8/31 | default | 1500 | False | - | - |
 | Ethernet4/1 | P2P_LINK_TO_CAGEA-LEAF-2B_Ethernet49/1 | routed | - | 172.17.6.12/31 | default | 1500 | False | - | - |
-| Ethernet51/1 | P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet49/1 | routed | - | 172.17.6.16/31 | default | 1500 | False | - | - |
-| Ethernet52/1 | P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet49/1 | routed | - | 172.17.6.20/31 | default | 1500 | False | - | - |
+| Ethernet51/1 | P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet51/1 | routed | - | 172.17.6.16/31 | default | 1500 | False | - | - |
+| Ethernet52/1 | P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet51/1 | routed | - | 172.17.6.20/31 | default | 1500 | False | - | - |
 
 #### Ethernet Interfaces Device Configuration
 
@@ -189,14 +208,14 @@ interface Ethernet4/1
    ip address 172.17.6.12/31
 !
 interface Ethernet51/1
-   description P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet49/1
+   description P2P_LINK_TO_CAGEA-BORDER-1A_Ethernet51/1
    no shutdown
    mtu 1500
    no switchport
    ip address 172.17.6.16/31
 !
 interface Ethernet52/1
-   description P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet49/1
+   description P2P_LINK_TO_CAGEA-BORDER-1B_Ethernet51/1
    no shutdown
    mtu 1500
    no switchport
@@ -364,10 +383,10 @@ router bgp 64512
    neighbor 172.17.6.13 description CAGEA-LEAF-2B_Ethernet49/1
    neighbor 172.17.6.17 peer group IPv4-UNDERLAY-PEERS
    neighbor 172.17.6.17 remote-as 64517
-   neighbor 172.17.6.17 description CAGEA-BORDER-1A_Ethernet49/1
+   neighbor 172.17.6.17 description CAGEA-BORDER-1A_Ethernet51/1
    neighbor 172.17.6.21 peer group IPv4-UNDERLAY-PEERS
    neighbor 172.17.6.21 remote-as 64517
-   neighbor 172.17.6.21 description CAGEA-BORDER-1B_Ethernet49/1
+   neighbor 172.17.6.21 description CAGEA-BORDER-1B_Ethernet51/1
    neighbor 172.17.8.1 peer group EVPN-OVERLAY-PEERS
    neighbor 172.17.8.1 remote-as 64513
    neighbor 172.17.8.1 description CAGEA-LEAF-1A

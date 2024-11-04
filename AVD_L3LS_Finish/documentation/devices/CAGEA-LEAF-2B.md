@@ -5,6 +5,8 @@
 - [Management](#management)
   - [Management Interfaces](#management-interfaces)
   - [Management API HTTP](#management-api-http)
+- [Authentication](#authentication)
+  - [Local Users](#local-users)
 - [Monitoring](#monitoring)
   - [TerminAttr Daemon](#terminattr-daemon)
 - [MLAG](#mlag)
@@ -30,6 +32,7 @@
   - [Virtual Router MAC Address](#virtual-router-mac-address)
   - [IP Routing](#ip-routing)
   - [IPv6 Routing](#ipv6-routing)
+  - [Static Routes](#static-routes)
   - [Router BGP](#router-bgp)
 - [BFD](#bfd)
   - [Router BFD](#router-bfd)
@@ -95,6 +98,23 @@ management api http-commands
    !
    vrf MGMT
       no shutdown
+```
+
+## Authentication
+
+### Local Users
+
+#### Local Users Summary
+
+| User | Privilege | Role | Disabled | Shell |
+| ---- | --------- | ---- | -------- | ----- |
+| cvpadmin | 15 | network-admin | False | - |
+
+#### Local Users Device Configuration
+
+```eos
+!
+username cvpadmin privilege 15 role network-admin secret sha512 <removed>
 ```
 
 ## Monitoring
@@ -185,8 +205,8 @@ vlan internal order ascending range 1006 1199
 
 | VLAN ID | Name | Trunk Groups |
 | ------- | ---- | ------------ |
-| 2430 | 2430-transit | - |
-| 2440 | 2440-transit | - |
+| 55 | VLAN55 | - |
+| 56 | VLAN56 | - |
 | 3029 | MLAG_iBGP_vr-3030 | LEAF_PEER_L3 |
 | 3030 | vlan3030 | - |
 | 3039 | MLAG_iBGP_vr-4040 | LEAF_PEER_L3 |
@@ -198,11 +218,11 @@ vlan internal order ascending range 1006 1199
 
 ```eos
 !
-vlan 2430
-   name 2430-transit
+vlan 55
+   name VLAN55
 !
-vlan 2440
-   name 2440-transit
+vlan 56
+   name VLAN56
 !
 vlan 3029
    name MLAG_iBGP_vr-3030
@@ -237,7 +257,7 @@ vlan 4094
 
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
-| Ethernet1 | TP2_Ethernet2 | *trunk | *3030 | *- | *- | 1 |
+| Ethernet1 | TP2_Ethernet2 | *trunk | *3030, 3040, 55, 56 | *- | *- | 1 |
 | Ethernet55/1 | MLAG_PEER_CAGEA-LEAF-2A_Ethernet55/1 | *trunk | *- | *- | *['LEAF_PEER_L3', 'MLAG'] | 551 |
 | Ethernet56/1 | MLAG_PEER_CAGEA-LEAF-2A_Ethernet56/1 | *trunk | *- | *- | *['LEAF_PEER_L3', 'MLAG'] | 551 |
 
@@ -292,7 +312,7 @@ interface Ethernet56/1
 
 | Interface | Description | Type | Mode | VLANs | Native VLAN | Trunk Group | LACP Fallback Timeout | LACP Fallback Mode | MLAG ID | EVPN ESI |
 | --------- | ----------- | ---- | ---- | ----- | ----------- | ------------| --------------------- | ------------------ | ------- | -------- |
-| Port-Channel1 | TP2_PortChannel host3 | switched | trunk | 3030 | - | - | - | - | 1 | - |
+| Port-Channel1 | TP2_PortChannel host3 | switched | trunk | 3030, 3040, 55, 56 | - | - | - | - | 1 | - |
 | Port-Channel551 | MLAG_PEER_CAGEA-LEAF-2A_Po551 | switched | trunk | - | - | ['LEAF_PEER_L3', 'MLAG'] | - | - | - | - |
 
 #### Port-Channel Interfaces Device Configuration
@@ -303,7 +323,7 @@ interface Port-Channel1
    description TP2_PortChannel host3
    no shutdown
    switchport
-   switchport trunk allowed vlan 3030
+   switchport trunk allowed vlan 3030, 3040, 55, 56
    switchport mode trunk
    mlag 1
    spanning-tree portfast
@@ -356,8 +376,6 @@ interface Loopback1
 
 | Interface | Description | VRF |  MTU | Shutdown |
 | --------- | ----------- | --- | ---- | -------- |
-| Vlan2430 | 2430-transit | vr-3030 | - | False |
-| Vlan2440 | 2440-transit | vr-4040 | - | False |
 | Vlan3029 | MLAG_PEER_L3_iBGP: vrf vr-3030 | vr-3030 | 1500 | False |
 | Vlan3030 | vlan3030 | vr-3030 | - | False |
 | Vlan3039 | MLAG_PEER_L3_iBGP: vrf vr-4040 | vr-4040 | 1500 | False |
@@ -369,8 +387,6 @@ interface Loopback1
 
 | Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
 | --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
-| Vlan2430 |  vr-3030  |  -  |  172.17.5.1/28  |  -  |  -  |  -  |  -  |
-| Vlan2440 |  vr-4040  |  -  |  172.17.5.17/28  |  -  |  -  |  -  |  -  |
 | Vlan3029 |  vr-3030  |  172.17.11.5/31  |  -  |  -  |  -  |  -  |  -  |
 | Vlan3030 |  vr-3030  |  -  |  172.30.30.1/24  |  -  |  -  |  -  |  -  |
 | Vlan3039 |  vr-4040  |  172.17.11.5/31  |  -  |  -  |  -  |  -  |  -  |
@@ -381,18 +397,6 @@ interface Loopback1
 #### VLAN Interfaces Device Configuration
 
 ```eos
-!
-interface Vlan2430
-   description 2430-transit
-   no shutdown
-   vrf vr-3030
-   ip address virtual 172.17.5.1/28
-!
-interface Vlan2440
-   description 2440-transit
-   no shutdown
-   vrf vr-4040
-   ip address virtual 172.17.5.17/28
 !
 interface Vlan3029
    description MLAG_PEER_L3_iBGP: vrf vr-3030
@@ -448,8 +452,8 @@ interface Vlan4094
 
 | VLAN | VNI | Flood List | Multicast Group |
 | ---- | --- | ---------- | --------------- |
-| 2430 | 12430 | - | - |
-| 2440 | 12440 | - | - |
+| 55 | 10055 | - | - |
+| 56 | 10056 | - | - |
 | 3030 | 13030 | - | - |
 | 3040 | 13040 | - | - |
 
@@ -469,8 +473,8 @@ interface Vxlan1
    vxlan source-interface Loopback1
    vxlan virtual-router encapsulation mac-address mlag-system-id
    vxlan udp-port 4789
-   vxlan vlan 2430 vni 12430
-   vxlan vlan 2440 vni 12440
+   vxlan vlan 55 vni 10055
+   vxlan vlan 56 vni 10056
    vxlan vlan 3030 vni 13030
    vxlan vlan 3040 vni 13040
    vxlan vrf vr-3030 vni 30
@@ -532,6 +536,23 @@ ip routing vrf vr-4040
 | MGMT | false |
 | vr-3030 | false |
 | vr-4040 | false |
+
+### Static Routes
+
+#### Static Routes Summary
+
+| VRF | Destination Prefix | Next Hop IP | Exit interface | Administrative Distance | Tag | Route Name | Metric |
+| --- | ------------------ | ----------- | -------------- | ----------------------- | --- | ---------- | ------ |
+| vr-3030 | 0.0.0.0/0 | 172.30.30.254 | - | 1 | - | - | - |
+| vr-4040 | 0.0.0.0/0 | 172.30.40.254 | - | 1 | - | - | - |
+
+#### Static Routes Device Configuration
+
+```eos
+!
+ip route vrf vr-3030 0.0.0.0/0 172.30.30.254
+ip route vrf vr-4040 0.0.0.0/0 172.30.40.254
+```
 
 ### Router BGP
 
@@ -607,8 +628,8 @@ ASN Notation: asplain
 
 | VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
 | ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
-| 2430 | 172.17.8.4:12430 | 12430:12430 | - | - | learned |
-| 2440 | 172.17.8.4:12440 | 12440:12440 | - | - | learned |
+| 55 | 172.17.8.4:10055 | 10055:10055 | - | - | learned |
+| 56 | 172.17.8.4:10056 | 10056:10056 | - | - | learned |
 | 3030 | 172.17.8.4:13030 | 13030:13030 | - | - | learned |
 | 3040 | 172.17.8.4:13040 | 13040:13040 | - | - | learned |
 
@@ -616,8 +637,8 @@ ASN Notation: asplain
 
 | VRF | Route-Distinguisher | Redistribute |
 | --- | ------------------- | ------------ |
-| vr-3030 | 172.17.8.4:30 | connected |
-| vr-4040 | 172.17.8.4:40 | connected |
+| vr-3030 | 172.17.8.4:30 | connected<br>static |
+| vr-4040 | 172.17.8.4:40 | connected<br>static |
 
 #### Router BGP Device Configuration
 
@@ -663,16 +684,6 @@ router bgp 64515
    neighbor 172.17.11.4 description CAGEA-LEAF-2A
    redistribute connected route-map RM-CONN-2-BGP
    !
-   vlan 2430
-      rd 172.17.8.4:12430
-      route-target both 12430:12430
-      redistribute learned
-   !
-   vlan 2440
-      rd 172.17.8.4:12440
-      route-target both 12440:12440
-      redistribute learned
-   !
    vlan 3030
       rd 172.17.8.4:13030
       route-target both 13030:13030
@@ -681,6 +692,16 @@ router bgp 64515
    vlan 3040
       rd 172.17.8.4:13040
       route-target both 13040:13040
+      redistribute learned
+   !
+   vlan 55
+      rd 172.17.8.4:10055
+      route-target both 10055:10055
+      redistribute learned
+   !
+   vlan 56
+      rd 172.17.8.4:10056
+      route-target both 10056:10056
       redistribute learned
    !
    address-family evpn
@@ -697,7 +718,8 @@ router bgp 64515
       route-target export evpn 30:30
       router-id 172.17.8.4
       neighbor 172.17.11.4 peer group MLAG-IPv4-UNDERLAY-PEER
-      redistribute connected
+      redistribute connected route-map RM-CONN-2-BGP-VRFS
+      redistribute static
    !
    vrf vr-4040
       rd 172.17.8.4:40
@@ -705,7 +727,8 @@ router bgp 64515
       route-target export evpn 40:40
       router-id 172.17.8.4
       neighbor 172.17.11.4 peer group MLAG-IPv4-UNDERLAY-PEER
-      redistribute connected
+      redistribute connected route-map RM-CONN-2-BGP-VRFS
+      redistribute static
 ```
 
 ## BFD
@@ -754,6 +777,12 @@ router bfd
 | 10 | permit 172.17.8.0/24 eq 32 |
 | 20 | permit 172.17.9.0/24 eq 32 |
 
+##### PL-MLAG-PEER-VRFS
+
+| Sequence | Action |
+| -------- | ------ |
+| 10 | permit 172.17.11.4/31 |
+
 #### Prefix-lists Device Configuration
 
 ```eos
@@ -761,6 +790,9 @@ router bfd
 ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
    seq 10 permit 172.17.8.0/24 eq 32
    seq 20 permit 172.17.9.0/24 eq 32
+!
+ip prefix-list PL-MLAG-PEER-VRFS
+   seq 10 permit 172.17.11.4/31
 ```
 
 ### Route-maps
@@ -772,6 +804,13 @@ ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
 | Sequence | Type | Match | Set | Sub-Route-Map | Continue |
 | -------- | ---- | ----- | --- | ------------- | -------- |
 | 10 | permit | ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY | - | - | - |
+
+##### RM-CONN-2-BGP-VRFS
+
+| Sequence | Type | Match | Set | Sub-Route-Map | Continue |
+| -------- | ---- | ----- | --- | ------------- | -------- |
+| 10 | deny | ip address prefix-list PL-MLAG-PEER-VRFS | - | - | - |
+| 20 | permit | - | - | - | - |
 
 ##### RM-MLAG-PEER-IN
 
@@ -785,6 +824,11 @@ ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
 !
 route-map RM-CONN-2-BGP permit 10
    match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+!
+route-map RM-CONN-2-BGP-VRFS deny 10
+   match ip address prefix-list PL-MLAG-PEER-VRFS
+!
+route-map RM-CONN-2-BGP-VRFS permit 20
 !
 route-map RM-MLAG-PEER-IN permit 10
    description Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing

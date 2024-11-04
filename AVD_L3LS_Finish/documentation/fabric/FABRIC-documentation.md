@@ -37,12 +37,12 @@
 
 | Type | Node | Node Interface | Peer Type | Peer Node | Peer Interface |
 | ---- | ---- | -------------- | --------- | ----------| -------------- |
-| l3leaf | CAGEA-BORDER-1A | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet51/1 |
-| l3leaf | CAGEA-BORDER-1A | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet51/1 |
+| l3leaf | CAGEA-BORDER-1A | Ethernet51/1 | spine | CAGEA-SPINE1 | Ethernet51/1 |
+| l3leaf | CAGEA-BORDER-1A | Ethernet52/1 | spine | CAGEA-SPINE2 | Ethernet51/1 |
 | l3leaf | CAGEA-BORDER-1A | Ethernet55/1 | mlag_peer | CAGEA-BORDER-1B | Ethernet55/1 |
 | l3leaf | CAGEA-BORDER-1A | Ethernet56/1 | mlag_peer | CAGEA-BORDER-1B | Ethernet56/1 |
-| l3leaf | CAGEA-BORDER-1B | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet52/1 |
-| l3leaf | CAGEA-BORDER-1B | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet52/1 |
+| l3leaf | CAGEA-BORDER-1B | Ethernet51/1 | spine | CAGEA-SPINE1 | Ethernet52/1 |
+| l3leaf | CAGEA-BORDER-1B | Ethernet52/1 | spine | CAGEA-SPINE2 | Ethernet52/1 |
 | l3leaf | CAGEA-LEAF-1A | Ethernet49/1 | spine | CAGEA-SPINE1 | Ethernet1/1 |
 | l3leaf | CAGEA-LEAF-1A | Ethernet50/1 | spine | CAGEA-SPINE2 | Ethernet1/1 |
 | l3leaf | CAGEA-LEAF-1A | Ethernet55/1 | mlag_peer | CAGEA-LEAF-1B | Ethernet55/1 |
@@ -68,10 +68,10 @@
 
 | Node | Node Interface | Node IP Address | Peer Node | Peer Interface | Peer IP Address |
 | ---- | -------------- | --------------- | --------- | -------------- | --------------- |
-| CAGEA-BORDER-1A | Ethernet49/1 | 172.17.6.17/31 | CAGEA-SPINE1 | Ethernet51/1 | 172.17.6.16/31 |
-| CAGEA-BORDER-1A | Ethernet50/1 | 172.17.6.19/31 | CAGEA-SPINE2 | Ethernet51/1 | 172.17.6.18/31 |
-| CAGEA-BORDER-1B | Ethernet49/1 | 172.17.6.21/31 | CAGEA-SPINE1 | Ethernet52/1 | 172.17.6.20/31 |
-| CAGEA-BORDER-1B | Ethernet50/1 | 172.17.6.23/31 | CAGEA-SPINE2 | Ethernet52/1 | 172.17.6.22/31 |
+| CAGEA-BORDER-1A | Ethernet51/1 | 172.17.6.17/31 | CAGEA-SPINE1 | Ethernet51/1 | 172.17.6.16/31 |
+| CAGEA-BORDER-1A | Ethernet52/1 | 172.17.6.19/31 | CAGEA-SPINE2 | Ethernet51/1 | 172.17.6.18/31 |
+| CAGEA-BORDER-1B | Ethernet51/1 | 172.17.6.21/31 | CAGEA-SPINE1 | Ethernet52/1 | 172.17.6.20/31 |
+| CAGEA-BORDER-1B | Ethernet52/1 | 172.17.6.23/31 | CAGEA-SPINE2 | Ethernet52/1 | 172.17.6.22/31 |
 | CAGEA-LEAF-1A | Ethernet49/1 | 172.17.6.1/31 | CAGEA-SPINE1 | Ethernet1/1 | 172.17.6.0/31 |
 | CAGEA-LEAF-1A | Ethernet50/1 | 172.17.6.3/31 | CAGEA-SPINE2 | Ethernet1/1 | 172.17.6.2/31 |
 | CAGEA-LEAF-1B | Ethernet49/1 | 172.17.6.5/31 | CAGEA-SPINE1 | Ethernet2/1 | 172.17.6.4/31 |
